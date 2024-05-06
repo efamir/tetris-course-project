@@ -34,7 +34,6 @@ class Figure {
     bool checkMoveLegalness(std::vector<coords> newCoords);
 
 protected:
-    std::vector<coords> initialCoords;//todo убрать наху
     states setOfCoordsToChangeToGetState;
     std::vector<coords> blockCoordsList;
 
@@ -50,7 +49,6 @@ public:
             field[ij.i][ij.j] = color;
         }
 
-        //todo початкові координати мають бути ініціалізовані в конструкторі класа нащадка
     }
 
     void rotate();
@@ -71,9 +69,6 @@ void Figure::rotate() {
     std::vector<coords> temp(blockCoordsList);
     int nextState;
 
-    /*if (currentState == setOfCoordsToChangeToGetState.size() - 1) { nextState = 0; }//todo використати цілочисленне ділення COMPLETED
-    else { nextState = currentState + 1; }*/
-
     nextState = (currentState + 1) % setOfCoordsToChangeToGetState.size();
 
     int i = 0;
@@ -85,9 +80,6 @@ void Figure::rotate() {
 
     if (!checkMoveLegalness(temp)) { return; }
 
-    /*if (currentState == setOfCoordsToChangeToGetState.size() - 1) { currentState = 0; }
-    else {currentState++;}*/
-
     currentState = (currentState + 1) % setOfCoordsToChangeToGetState.size();
 
     for (coords &coord: blockCoordsList) {
@@ -97,7 +89,7 @@ void Figure::rotate() {
     for (coords &coord: temp) {
         field[coord.i][coord.j] = color;
     }
-    blockCoordsList = std::move(temp);//todo глянути чи можна ще десь використати move
+    blockCoordsList = std::move(temp);
     draw();
     return;
 }
