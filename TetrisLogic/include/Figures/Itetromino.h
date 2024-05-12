@@ -8,5 +8,5 @@
 
 class Itetromino : public Figure {
 public:
-    Itetromino(Color (&field)[22][10]);
+    Itetromino(Color (&field)[22][10],TetrisRenderer &tetrisRenderer);
 };

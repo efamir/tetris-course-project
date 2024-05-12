@@ -1,20 +1,20 @@
 #include "../../include/Figures/TetrisBaseFigure.h"
 
 
-
+//coords::coords() {i = 0; j = 0;}
 coords::coords(int i, int j) {
-        this->i = i;
-        this->j = j;
+    this->i = i;
+    this->j = j;
 }
 
-std::random_device rd ;
+std::random_device rd;
 std::mt19937 engine{rd()};
 std::uniform_int_distribution<int> randColor{2, 14 - 1};
 
-TetrisRenderer Figure::tetrisRenderer;
+//TetrisRenderer Figure::tetrisRenderer;
 
-Figure::Figure(Color (&field)[22][10], Color color) : field(field), color(color) {
-    currentState = 0; //не надається можливість обрати випадкову початкову форму через можливе
+Figure::Figure(Color (&field)[22][10], TetrisRenderer &tetrisRenderer, Color color) : field(field), color(color),tetrisRenderer(tetrisRenderer) {
+    //currentState = 0; //не надається можливість обрати випадкову початкову форму через можливе
     // винекнення проблем(або бо так у стандартному тетрісі(поле наступної фігури всього 2 блоки у висоту))
     //blockCoordsList = blockCrdsLst;
     for (coords ij: blockCoordsList) {
@@ -23,21 +23,34 @@ Figure::Figure(Color (&field)[22][10], Color color) : field(field), color(color)
 }
 
 void Figure::rotate() {
-    std::vector<coords> temp(blockCoordsList);
-    int nextState;
+    //std::vector<coords> temp(blockCoordsList);
 
-    nextState = (currentState + 1) % setOfCoordsToChangeToGetState.size();
+    //int i = 0;//todo try to remake or return back
 
-    int i = 0;//todo try to remake or return back
+    /*
     for (coords &coord: temp) {
         coord.i += setOfCoordsToChangeToGetState[nextState][i].i;
         coord.j += setOfCoordsToChangeToGetState[nextState][i].j;
         i++;
+    }*/
+
+    //test method
+    std::vector<coords> temp;
+
+    //coords pivot(blockCoordsList[1]); //govno? //todo винести опорний блок в конструктор
+    for (const coords &coord: blockCoordsList) {
+        int i = coord.i - blockCoordsList[pivot].i;
+        int j = coord.j - blockCoordsList[pivot].j;
+
+        int newI = blockCoordsList[pivot].i - j;
+        int newJ = blockCoordsList[pivot].j + i;
+
+        temp.push_back({newI, newJ});
     }
 
     if (!checkMoveLegalness(temp)) { return; }
 
-    currentState = (currentState + 1) % setOfCoordsToChangeToGetState.size();
+    //currentState = (currentState + 1) % setOfCoordsToChangeToGetState.size();
 
     for (coords &coord: blockCoordsList) {
         field[coord.i][coord.j] = Black;
@@ -137,5 +150,18 @@ void Figure::draw() {
         if (coord.i <= 1) { continue; }
         tetrisRenderer.drawTetrisWindowBlock(coord.i - 2, coord.j, field[(coord.i)][coord.j]);
         //tetrisRenderer.drawTetrisWindowBlock(coord.i - 2, coord.j,color);
+    }
+}
+
+void Figure::drawAsNextFigure() {
+    for (coords &coord: blockCoordsList) {
+        tetrisRenderer.drawNextItemWindowBlock(coord.i, coord.j-3, color);
+    }
+}
+
+void Figure::dropDown() {
+    while (true) {
+        if (!moveDown()) { return; }
+        std::this_thread::sleep_for(std::chrono::microseconds(20));
     }
 }

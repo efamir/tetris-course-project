@@ -5,7 +5,7 @@
 
 
 #include <vector>
-#include "../../TetrisRenderer/include/TetrisRenderer.h"
+#include "../../../TetrisRenderer/include/TetrisRenderer.h"
 #include <chrono>
 #include <thread>
 #include <random>
@@ -13,43 +13,31 @@
 struct coords {
     unsigned int i;
     unsigned int j;
-
-    coords(int i, int j) {
-        this->i = i;
-        this->j = j;
-    }
+    //coords();
+    coords(int i, int j);
 };
 
-typedef std::vector<std::vector<coords>> states;//
+//typedef std::vector<std::vector<coords>> states;//
 
-std::random_device rd;
-std::mt19937 engine{rd()};
-std::uniform_int_distribution<int> randColor{2, 14 - 1};
+//extern  std::random_device rd ;
+extern  std::mt19937 engine;
+extern  std::uniform_int_distribution<int> randColor;
 
 class Figure {
     Color (&field)[22][10];
     const Color color;
-    unsigned int currentState;
-
+    //unsigned int currentState;
     bool checkMoveLegalness(std::vector<coords> newCoords);
 
 protected:
-    states setOfCoordsToChangeToGetState;
+    int pivot;
+    //states setOfCoordsToChangeToGetState;
     std::vector<coords> blockCoordsList;
 
 public:
-    static TetrisRenderer tetrisRenderer;//здається я виніс це в паблік щоб використовувати в тестах //todo повернути назад в private
+    TetrisRenderer &tetrisRenderer;//здається я виніс це в паблік щоб використовувати в тестах //todo повернути назад в private
 
-    Figure(Color (&field)[22][10],
-           Color color = static_cast<Color>(randColor(engine))) : field(field), color(color) {
-        currentState = 0; //не надається можливість обрати випадкову початкову форму через можливе
-        // винекнення проблем(або бо так у стандартному тетрісі(поле наступної фігури всього 2 блоки у висоту))
-        //blockCoordsList = blockCrdsLst;
-        for (coords ij: blockCoordsList) {
-            field[ij.i][ij.j] = color;
-        }
-
-    }
+    Figure(Color (&field)[22][10],TetrisRenderer &tetrisRenderer, Color color = static_cast<Color>(randColor(engine)));
 
     void rotate();
 
@@ -60,10 +48,27 @@ public:
     bool moveDown();
 
     void draw();
+
+    void drawAsNextFigure();
+
+    void dropDown();
+
+    void setPivot(int index){pivot = index;}//todo delete?
 };
 
 
-TetrisRenderer Figure::tetrisRenderer;
+//TetrisRenderer Figure::tetrisRenderer;
+
+/*
+
+Figure::Figure(Color (&field)[22][10], Color color = static_cast<Color>(randColor(engine))) : field(field), color(color) {
+    currentState = 0; //не надається можливість обрати випадкову початкову форму через можливе
+    // винекнення проблем(або бо так у стандартному тетрісі(поле наступної фігури всього 2 блоки у висоту))
+    //blockCoordsList = blockCrdsLst;
+    for (coords ij: blockCoordsList) {
+        field[ij.i][ij.j] = color;
+    }
+}
 
 void Figure::rotate() {
     std::vector<coords> temp(blockCoordsList);
@@ -182,3 +187,5 @@ void Figure::draw() {
         //tetrisRenderer.drawTetrisWindowBlock(coord.i - 2, coord.j,color);
     }
 }
+
+*/
