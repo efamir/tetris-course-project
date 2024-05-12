@@ -1,6 +1,6 @@
 #include "../include/Cursor.h"
 
-Cursor::Cursor(const uint xLength, const uint yLength, std::ostream & stream, const uint x, const uint y)
+Cursor::Cursor(const uint xLength, const uint yLength, std::wostream & stream, const uint x, const uint y)
         : _xLen(xLength), _yLen(yLength), _stream(stream) {
     if (!xLength || !yLength) {
         throw std::invalid_argument("Invalid argument was passed to Cursor::Cursor(): "
@@ -38,14 +38,7 @@ void Cursor::moveTo(const uint x, const uint y) {
     _y = y;
 }
 
-void Cursor::fill(std::string const& c, Color const color, bool resetPos) {
-    _stream << ColorANSI.at(color);
-    _stream << c; // TODO: make a check on symbol length
-    if (resetPos) ANSICursorLeft(_stream, 1);
-    else ++_x;
-}
-
-void Cursor::fill(char const& c, Color const color, bool resetPos) {
+void Cursor::fill(wchar_t const& c, Color const color, bool resetPos) {
     _stream << ColorANSI.at(color);
     _stream << c;
     if (resetPos) ANSICursorLeft(_stream, 1);

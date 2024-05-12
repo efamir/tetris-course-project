@@ -8,7 +8,7 @@ BlocksWindow::BlocksWindow(Cursor & cursor, uint rows, uint cols, uint x, uint y
     }
 }
 
-void BlocksWindow::draw(uint rowI, uint colI, Color color, std::string const& s) {
+void BlocksWindow::draw(uint rowI, uint colI, Color color, wchar_t const& ch) {
     if (rowI >= _rows || colI >= _cols) {
         throw std::out_of_range("Out of range value was passed to BlocksWindow method: "
                                 "rowI/colI is/are >= to rows/cols length"); // TODO: change exception
@@ -16,11 +16,23 @@ void BlocksWindow::draw(uint rowI, uint colI, Color color, std::string const& s)
 
     try {
         _cursor.moveTo(_x + colI * 2, _y + rowI);
-        _cursor.fill(s, color, false);
-        _cursor.fill(s, color);
+        _cursor.fill(ch, color, false);
+        _cursor.fill(ch, color);
     } catch (std::out_of_range const& e) {
         throw e;
     } catch (...) {
         throw std::runtime_error("Unexpected error was caught in BlocksWindow::draw().");
+    }
+}
+
+void BlocksWindow::clear() {
+    for (uint r = 0; r < _rows; ++r) {
+        for (uint c = 0; c < _cols; ++c) {
+            try {
+                draw(r, c, Black);
+            } catch (std::exception const& e) {
+                throw e;
+            }
+        }
     }
 }

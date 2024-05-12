@@ -4,8 +4,12 @@
 #include <random>
 
 int main() {
+    std::setlocale(LC_ALL, "");
+
     TetrisRenderer tr;
     tr.initDraw();
+
+    //std::wcout << "\x1b[41m";
 
     int r = 20, c = 10;
 
@@ -20,13 +24,13 @@ int main() {
     std::uniform_int_distribution<int> randColor{2, 14-1};
     std::uniform_int_distribution<int> randScore{0, 999999999};
 
-    for (int i = 0; i < 500; i++) {
+    for (int i = 0; i < 10000; i++) {
         tr.drawTetrisWindowBlock(randRow(engine), randColumn(engine), static_cast<Color>(randColor(engine)));
         tr.drawNextItemWindowBlock(randNIWRow(engine), randNIWColumn(engine), static_cast<Color>(randColor(engine)));
         tr.setScore(randScore(engine));
         tr.drawScore(static_cast<Color>(randColor(engine)), static_cast<Color>(randColor(engine)));
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(3));
+        // std::this_thread::sleep_for(std::chrono::milliseconds(3));
     }
 
     return 0;

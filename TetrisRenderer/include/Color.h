@@ -9,6 +9,6 @@ enum Color {
     Blue, BBlue, Magenta, BMagenta, Cyan, BCyan, White, BWhite
 };
 
-extern const std::map<Color, std::string> ColorANSI;
+extern const std::map<Color, std::wstring> ColorANSI;
 
 #endif //COURSEWORK_COLOR_H

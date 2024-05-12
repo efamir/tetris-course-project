@@ -13,35 +13,36 @@ struct DefaultParams {
         return defaultColors;
     }
 
-    static std::ostream & getStream() {
+    static std::wostream & getStream() {
         return _stream;
     }
 
 private:
-    static std::ostream & _stream;
+    static std::wostream & _stream;
 };
 
-std::ostream & DefaultParams::_stream = std::cout;
+std::wostream & DefaultParams::_stream = std::wcout;
 
 
 TetrisRenderer::TetrisRenderer()
     : _cursor(Cursor(DefaultParams::c, DefaultParams::r, DefaultParams::getStream())),
     _bg(DefaultParams::getDefaultColors()),
     _tw(_cursor), _niw(_cursor),
-    _sw(_cursor, DefaultParams::score, DefaultParams::bestScore) {
+    _sw(_cursor, DefaultParams::score, DefaultParams::bestScore),
+    _gsd(_cursor) {
     DefaultParams::getStream() << std::unitbuf;
 }
 
 TetrisRenderer::~TetrisRenderer() {
     _cursor.moveTo();
-    ANSICursorDown(std::cout, DefaultParams::r);
+    ANSICursorDown(DefaultParams::getStream(), DefaultParams::r);
     DefaultParams::getStream() << "\r";
 }
 
 void TetrisRenderer::setCursorUnderTheGame() {
     try {
         _cursor.moveTo();
-        ANSICursorDown(std::cout, DefaultParams::r);
+        ANSICursorDown(DefaultParams::getStream(), DefaultParams::r);
     } catch (std::out_of_range const& e) {
         throw e;
     } catch (std::runtime_error const& e) {
@@ -69,9 +70,9 @@ void TetrisRenderer::initDraw() {
     }
 }
 
-void TetrisRenderer::drawTetrisWindowBlock(uint rowI, uint colI, Color color, const std::string &s) {
+void TetrisRenderer::drawTetrisWindowBlock(uint rowI, uint colI, Color color, wchar_t const& ch) {
     try {
-        _tw.draw(rowI, colI, color, s);
+        _tw.draw(rowI, colI, color, ch);
     } catch (std::out_of_range const& e) {
         setCursorUnderTheGame();
         throw e;
@@ -84,9 +85,9 @@ void TetrisRenderer::drawTetrisWindowBlock(uint rowI, uint colI, Color color, co
     }
 }
 
-void TetrisRenderer::drawNextItemWindowBlock(uint rowI, uint colI, Color color, const std::string &s) {
+void TetrisRenderer::drawNextItemWindowBlock(uint rowI, uint colI, Color color, wchar_t const& ch) {
     try {
-        _niw.draw(rowI, colI, color, s);
+        _niw.draw(rowI, colI, color, ch);
     } catch (std::out_of_range const& e) {
         setCursorUnderTheGame();
         throw e;
@@ -115,5 +116,25 @@ void TetrisRenderer::drawScore(Color scoreColor, Color bestScoreColor) {
     } catch (...) {
         setCursorUnderTheGame();
         throw std::runtime_error("Unexpected error was caught in TetrisRenderer::drawScore().");
+    }
+}
+
+void TetrisRenderer::drawPause() {
+    try {
+        _tw.clear();
+        _gsd.drawPause();
+    } catch (...) {
+        setCursorUnderTheGame();
+        throw std::runtime_error("Unexpected error was caught in TetrisRenderer::drawPause().");
+    }
+}
+
+void TetrisRenderer::drawGameOver() {
+    try {
+        _tw.clear();
+        _gsd.drawGameOver();
+    } catch (...) {
+        setCursorUnderTheGame();
+        throw std::runtime_error("Unexpected error was caught in TetrisRenderer::drawGameOver().");
     }
 }
