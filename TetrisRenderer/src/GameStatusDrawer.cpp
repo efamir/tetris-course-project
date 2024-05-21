@@ -1,46 +1,40 @@
 #include "../include/GameStatusDrawer.h"
-#include <fstream>
 
 GameStatusDrawer::GameStatusDrawer(Cursor & cursor) : _cursor(cursor) {}
 
-void GameStatusDrawer::drawPause() {
-    std::wifstream pauseFile("../TetrisRenderer/pause.txt"); // todo remove hardcode
-    if (!pauseFile.is_open()) {
-        throw std::runtime_error("Couldn't open pause.txt file.");
-    }
-    pauseFile >> std::noskipws;
-
+void GameStatusDrawer::draw(const std::wstring &str, Color const& color) {
     uint row = 2;
     _cursor.moveTo(1, row);
 
-    wchar_t ch;
-    for (;pauseFile.get(ch);) {
+    for (wchar_t const ch: str) {
         if (ch == L'\n') {
             _cursor.moveTo(1, ++row);
             continue;
         }
-        if (ch == L'\r') continue;
-        _cursor.fill(ch, Red, false);
+        _cursor.fill(ch, color, false);
     }
 }
 
+void GameStatusDrawer::drawPause() {
+    std::wstring const pause =
+            L"█▀█ ▄▀█ █░█ █▀ █▀▀\n"
+             "█▀▀ █▀█ █▄█ ▄█ ██▄\n"
+             "\n"
+             "press p to continue";
+
+    draw(pause, Magenta);
+}
+
 void GameStatusDrawer::drawGameOver() {
-    std::wifstream pauseFile("../TetrisRenderer/gameover.txt"); // todo remove hardcode
-    if (!pauseFile.is_open()) {
-        throw std::runtime_error("Couldn't open gameover.txt file.");
-    }
-    pauseFile >> std::noskipws;
+    std::wstring const gameOver =
+            L"█▀▀ ▄▀█ █▀▄▀█ █▀▀\n"
+             "█▄█ █▀█ █░▀░█ ██▄\n"
+             "\n"
+             " █▀█ █░█ █▀▀ █▀█\n"
+             " █▄█ ▀▄▀ ██▄ █▀▄\n"
+             " \n"
+             " press q to quit\n"
+             " or r to restart";
 
-    uint row = 2;
-    _cursor.moveTo(1, row);
-
-    wchar_t ch;
-    for (;pauseFile.get(ch);) {
-        if (ch == L'\n') {
-            _cursor.moveTo(1, ++row);
-            continue;
-        }
-        if (ch == L'\r') continue;
-        _cursor.fill(ch, Magenta, false);
-    }
+    draw(gameOver, BMagenta);
 }

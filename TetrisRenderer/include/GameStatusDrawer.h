@@ -7,6 +7,7 @@
 
 class GameStatusDrawer {
     Cursor & _cursor;
+    void draw(std::wstring const& str, Color const& color = Red);
 public:
     GameStatusDrawer(Cursor & cursor);
 
@@ -14,6 +15,5 @@ public:
 
     void drawGameOver();
 };
-
 
 #endif //COURSEWORK_GAMESTATUSDRAWER_H
