@@ -2,16 +2,27 @@
 
 BlocksWindow::BlocksWindow(Cursor & cursor, uint rows, uint cols, uint x, uint y)
 : _cursor(cursor), _rows(rows), _cols(cols), _x(x), _y(y) {
-    if (!cols || !rows) {
+    if (cols == 0) {
         throw std::invalid_argument("Invalid argument was passed to BlocksWindow::BlocksWindow(): "
-                                    "Cols or Rows number must be non-negative."); // TODO: change exception
+                                    "Cols number must be non-zero.");
+    }
+    if (rows == 0) {
+        throw std::invalid_argument("Invalid argument was passed to BlocksWindow::BlocksWindow(): "
+                                    "Rows number must be non-negative.");
     }
 }
 
 void BlocksWindow::draw(uint rowI, uint colI, Color color, wchar_t const& ch) {
-    if (rowI >= _rows || colI >= _cols) {
-        throw std::out_of_range("Out of range value was passed to BlocksWindow method: "
-                                "rowI/colI is/are >= to rows/cols length"); // TODO: change exception
+    if (rowI >= _rows) {
+        throw std::out_of_range("Out of range rowI value was passed to BlocksWindow method: "
+                                + std::to_string(rowI) + " was given when "
+                                + std::to_string(_rows - 1) + " is the max value.");
+    }
+
+    if (colI >= _cols) {
+        throw std::out_of_range("Out of range colI value was passed to BlocksWindow method: "
+                                + std::to_string(colI) + " was given when "
+                                + std::to_string(_cols - 1) + " is the max value.");
     }
 
     try {

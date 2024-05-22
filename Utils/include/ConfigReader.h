@@ -18,7 +18,6 @@ protected:
     uint _bestScore;
     int _difficulty;
     int _colorScheme;
-    // todo file names for drawers
     bool validateAndUpdateData(ConfigOptions option, std::string const& value);
 
     ConfigReader(std::string const& fileName);
@@ -37,12 +36,10 @@ public:
     uint getBestScore();
     uint getDifficulty();
     uint getColorScheme();
-    // todo file names
 
     bool setBestScore(uint newBestScore);
     bool setDifficulty(uint difficulty);
-    bool setColorScheme(uint cs); // todo
-    // bool setFilesForDrawers(); // todo (maybe not)
+    bool setColorScheme(uint cs);
 };
 
 #endif //COURSEWORK_CONFIGREADER_H

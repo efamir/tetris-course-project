@@ -43,7 +43,6 @@ ConfigReader * ConfigReader::getInstance(const std::string &fileName) {
 
 ConfigReader * ConfigReader::getInstance() {
     if (_instance != nullptr) return _instance;
-    // todo What if not created?
     throw std::runtime_error("Runtime error in ConfigReader::getInstance(): the instance hasn't been initialised yet.");
 }
 
