@@ -10,4 +10,6 @@ void ANSICursorDown(std::wostream & stream, int n = 1, bool moveStartLine = fals
 void ANSICursorLeft(std::wostream & stream, int n = 1);
 void ANSICursorRight(std::wostream & stream, int n = 1);
 
+void ANSIClearLine(std::wostream &stream);
+
 #endif //COURSEWORK_CONSOLECURSORMANIPULATIONS_H

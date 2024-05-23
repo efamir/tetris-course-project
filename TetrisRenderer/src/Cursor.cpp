@@ -61,7 +61,7 @@ void Cursor::moveTo(const uint x, const uint y) {
 }
 
 void Cursor::fill(wchar_t const& c, Color const color, bool resetPos) {
-    _stream << ColorANSI.at(color);
+    _stream << ColorANSI::get(color);
     _stream << c;
     if (resetPos) ANSICursorLeft(_stream, 1);
     else ++_x;

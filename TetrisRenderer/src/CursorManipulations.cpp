@@ -17,3 +17,7 @@ void ANSICursorLeft(std::wostream &stream, int n) {
 void ANSICursorRight(std::wostream &stream, int n) {
     stream << "\x1b[" << n << 'C';
 }
+
+void ANSIClearLine(std::wostream &stream) {
+    stream << "\033[2K\r";
+}

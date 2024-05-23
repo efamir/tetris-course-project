@@ -25,12 +25,12 @@ int convertIntToStr(std::string const& str) {
     }
 }
     struct ParamLimits {
-        ParamLimits(uint dMin = 0, uint dMax = 5, uint csMin_ = 0, uint csMax_ = 5)
+        ParamLimits(uint dMin = 0, uint dMax = 5, uint csMin_ = 0, uint csMax_ = 10)
                 : difficultyMin(dMin), difficultyMax(dMax), csMin(csMin_), csMax(csMax_) {}
         const uint difficultyMin, difficultyMax, csMin, csMax;
     };
 
-    ParamLimits defaultParams(0, 5, 0, 5); // todo change later
+    ParamLimits defaultParams(0, 5, 0, 10); // todo change later
 }
 
 ConfigReader * ConfigReader::_instance = nullptr;

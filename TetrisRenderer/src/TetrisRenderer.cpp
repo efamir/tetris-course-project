@@ -34,6 +34,7 @@ TetrisRenderer::TetrisRenderer()
 }
 
 TetrisRenderer::~TetrisRenderer() {
+    DefaultParams::getStream() << ColorANSI::get(BgReset);
     _cursor.moveTo();
     ANSICursorDown(DefaultParams::getStream(), DefaultParams::r);
     DefaultParams::getStream() << "\r";
@@ -54,7 +55,9 @@ void TetrisRenderer::setCursorUnderTheGame() {
 
 void TetrisRenderer::initDraw() {
     try {
+        ColorANSI::loadCS();
         _bg.draw(DefaultParams::getStream());
+        DefaultParams::getStream() << ColorANSI::get(BgBlack);
         _sw.draw();
         _niw.initDraw();
         _cursor.moveTo();

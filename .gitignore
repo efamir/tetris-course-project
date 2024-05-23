@@ -3,3 +3,5 @@ Tests
 .idea
 config.txt
 TetrisRenderer/*.txt
+test.cpp
+AllPossibleColorSchemes.cpp

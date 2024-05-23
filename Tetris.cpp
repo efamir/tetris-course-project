@@ -5,6 +5,7 @@
 // #include "Utils/include/TetrisExecutor.h"
 #include <chrono>
 #include <thread>
+#include "TetrisRenderer/include/CursorManipulations.h"
 
 int convertIntToStr(std::string const& str) {
     try {
@@ -86,16 +87,12 @@ int main(int argc, char* argv[]) {
     if (paramsRead == -1) {
         std::cout << "Couldn't open config file. Continuing with passed/default params." << std::flush;
         std::this_thread::sleep_for(std::chrono::seconds(secondShowingInfo));
-        std::cout << "\r";
-        for (int _ = 0; _ < 75; ++_) std::cout << ' '; // todo find better way to clean
-        std::cout << "\r";
+        ANSIClearLine(std::wcout);
     } else if (paramsRead < targetParamsRead) {
         std::cout << "Couldn't read " << targetParamsRead - paramsRead
-                  << "params. Continuing with passed/default params." << std::flush;
+                  << " params. Continuing with passed/default params." << std::flush;
         std::this_thread::sleep_for(std::chrono::seconds(secondShowingInfo));
-        std::cout << "\r";
-        for (int _ = 0; _ < 75; ++_) std::cout << ' ';
-        std::cout << "\r";
+        ANSIClearLine(std::wcout);
     }
 
     if (saveConfigChanges) configReader->saveConfigData();
