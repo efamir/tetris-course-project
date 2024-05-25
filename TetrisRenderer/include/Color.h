@@ -3,12 +3,23 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 enum Color {
     Black, BBlack, Red, BRed, Green, BGreen, Yellow, BYellow,
-    Blue, BBlue, Magenta, BMagenta, Cyan, BCyan, White, BWhite
+    Blue, BBlue, Magenta, BMagenta, BCyan, Cyan, White, BWhite,
+    BgBlack, BgReset
 };
 
-extern const std::map<Color, std::string> ColorANSI;
+class ColorANSI {
+protected:
+    static uint _currentCS;
+    static const std::vector<std::map<Color, std::wstring>> _colorSchemes;
+public:
+    static std::wstring get(Color const color);
+    static void loadCS();
+};
+
+// extern const std::map<Color, std::wstring> ColorANSI;
 
 #endif //COURSEWORK_COLOR_H

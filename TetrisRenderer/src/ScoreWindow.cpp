@@ -3,8 +3,10 @@
 ScoreWindow::ScoreWindow(Cursor & cursor, uint score, uint bestScore, ScoreCoord coord)
 : _cursor(cursor), _score(score), _bestScore(bestScore), _x(coord.x), _y(coord.y) {
     if (_score > _bestScore) {
-        throw std::invalid_argument("Invalid argument was passed to ScoreWindow::ScoreWindow(): "
-                                    "score must not be greater than bestScore."); // TODO: change exception
+        throw std::out_of_range("Invalid argument was passed to ScoreWindow::ScoreWindow(): "
+                                "score must not be greater than bestScore: score = "
+                                + std::to_string(score) + "; bestScore = "
+                                + std::to_string(bestScore));
     }
 }
 
@@ -18,16 +20,19 @@ void ScoreWindow::setScore(uint score) {
     _totalScoreChanged = true;
 }
 
-void ScoreWindow::setBestScore(uint score) {
-    if (score < _bestScore) {
+void ScoreWindow::setBestScore(uint bestScore) {
+    if (bestScore < _bestScore) {
         throw std::invalid_argument("Invalid argument was passed to ScoreWindow::setBestScore(): "
-                                    "score must not be greater than bestScore."); // TODO: change exception
+                                    "new best score must not be lower than previous. new best score = "
+                                      + std::to_string(bestScore) + "; old best score = "
+                                      + std::to_string(_bestScore));
     }
-    _bestScore = score;
+
+    _bestScore = bestScore;
     _bestScoreChanged = true;
 }
 
-void ScoreWindow::draw(Color scoreColor, Color bestScoreColor) { // TODO: make it beautifull maybe
+void ScoreWindow::draw(Color scoreColor, Color bestScoreColor) {
     try {
         _cursor.moveTo(_x, _y);
 

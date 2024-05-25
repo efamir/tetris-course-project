@@ -8,6 +8,7 @@
 #include "NextItemWindow.h"
 #include "Color.h"
 #include "ScoreWindow.h"
+#include "GameStatusDrawer.h"
 #include <iostream>
 
 
@@ -17,6 +18,7 @@ class TetrisRenderer {
     BlocksWindow _tw;
     NextItemWindow _niw;
     ScoreWindow _sw;
+    GameStatusDrawer _gsd;
 
     void setCursorUnderTheGame();
 public:
@@ -24,10 +26,12 @@ public:
     ~TetrisRenderer();
 
     void initDraw();
-    void drawTetrisWindowBlock(uint rowI, uint colI, Color color = White, std::string const& s = "█");
-    void drawNextItemWindowBlock(uint rowI, uint colI, Color color = White, std::string const& s = "█");
+    void drawTetrisWindowBlock(uint rowI, uint colI, Color color = White, wchar_t const& ch = L'█');
+    void drawNextItemWindowBlock(uint rowI, uint colI, Color color = White, wchar_t const& ch = L'█');
     void setScore(uint score);
     void drawScore(Color scoreColor = White, Color bestScoreColor = White);
+    void drawPause();
+    void drawGameOver();
 };
 
 

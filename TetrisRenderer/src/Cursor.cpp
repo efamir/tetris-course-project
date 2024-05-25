@@ -1,24 +1,46 @@
 #include "../include/Cursor.h"
 
-Cursor::Cursor(const uint xLength, const uint yLength, std::ostream & stream, const uint x, const uint y)
+Cursor::Cursor(const uint xLength, const uint yLength, std::wostream & stream, const uint x, const uint y)
         : _xLen(xLength), _yLen(yLength), _stream(stream) {
-    if (!xLength || !yLength) {
+    if (xLength == 0) {
         throw std::invalid_argument("Invalid argument was passed to Cursor::Cursor(): "
-                                    "X or Y length must be non-negative."); // TODO: make specified exception
+                                    "xLength must not equal 0.");
     }
-    if (x >= xLength || y >= yLength) {
+    if (yLength == 0) {
+        throw std::invalid_argument("Invalid argument was passed to Cursor::Cursor(): "
+                                    "yLength must not equal 0.");
+    }
+    if (x >= xLength) {
         throw std::out_of_range("Out of range coordinate was passed to Cursor::Cursor(): "
-                                "X/Y is/are >= to X/Y length"); // TODO: make specified exception
+                                "x can't be greater or equal to xLength: x = "
+                                + std::to_string(x) + "; xLength = "
+                                + std::to_string(xLength));
+    }
+    if (y >= yLength) {
+        throw std::out_of_range("Out of range coordinate was passed to Cursor::Cursor(): "
+                                "y can't be greater or equal to yLength: y = "
+                                + std::to_string(y) + "; yLength = "
+                                + std::to_string(yLength));
     }
     _x = x;
     _y = y;
 }
 
 void Cursor::moveTo(const uint x, const uint y) {
-    if (x >= _xLen || y >= _yLen) {
+    if (x >= _xLen) {
         throw std::out_of_range("Out of range value was passed to Cursor::moveTo() method: "
-                                "X/Y is/are >= to X/Y length"); // TODO: change exception
+                                "x can't be greater or equal to xLength: x = "
+                                + std::to_string(x) + "; xLength = "
+                                + std::to_string(_xLen));
     }
+
+    if (y >= _yLen) {
+        throw std::out_of_range("Out of range value was passed to Cursor::moveTo() method: "
+                                "y can't be greater or equal to yLength: y = "
+                                + std::to_string(y) + "; yLength = "
+                                + std::to_string(_yLen));
+    }
+
     int xDiff = x - _x;
     int yDiff = y - _y;
 
@@ -38,15 +60,8 @@ void Cursor::moveTo(const uint x, const uint y) {
     _y = y;
 }
 
-void Cursor::fill(std::string const& c, Color const color, bool resetPos) {
-    _stream << ColorANSI.at(color);
-    _stream << c; // TODO: make a check on symbol length
-    if (resetPos) ANSICursorLeft(_stream, 1);
-    else ++_x;
-}
-
-void Cursor::fill(char const& c, Color const color, bool resetPos) {
-    _stream << ColorANSI.at(color);
+void Cursor::fill(wchar_t const& c, Color const color, bool resetPos) {
+    _stream << ColorANSI::get(color);
     _stream << c;
     if (resetPos) ANSICursorLeft(_stream, 1);
     else ++_x;

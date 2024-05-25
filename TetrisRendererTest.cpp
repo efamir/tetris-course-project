@@ -1,9 +1,22 @@
 #include "TetrisRenderer/include/TetrisRenderer.h"
+#include "Utils/include/ConfigReader.h"
+#include "Utils/include/InputReader.h"
 #include <chrono>
 #include <thread>
 #include <random>
 
-int main() {
+int main(int argc, char const * const * argv) {
+    std::setlocale(LC_ALL, "");
+    InputReader ir;
+    ir.setFlags();
+
+    ConfigReader * configReader = ConfigReader::getInstance("config.txt");
+    configReader->loadConfigData();
+
+    if (argc > 1) {
+        configReader->setColorScheme(std::atoi(argv[1]));
+    }
+
     TetrisRenderer tr;
     tr.initDraw();
 
@@ -17,7 +30,7 @@ int main() {
     std::uniform_int_distribution<int> randNIWRow{0, 1};
     std::uniform_int_distribution<int> randNIWColumn{0, 3};
 
-    std::uniform_int_distribution<int> randColor{2, 14-1};
+    std::uniform_int_distribution<int> randColor{2, 14-2};
     std::uniform_int_distribution<int> randScore{0, 999999999};
 
     for (int i = 0; i < 500; i++) {
@@ -28,6 +41,8 @@ int main() {
 
         std::this_thread::sleep_for(std::chrono::milliseconds(3));
     }
+
+    ir.resetFlags();
 
     return 0;
 }

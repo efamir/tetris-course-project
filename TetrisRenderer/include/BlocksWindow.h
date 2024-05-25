@@ -15,7 +15,8 @@ protected:
     const uint _x, _y;
 public:
     BlocksWindow(Cursor & cursor, uint rows = 20, uint cols = 10, uint x = 0, uint y = 0);
-    void draw(uint rowI, uint colI, Color color = White, std::string const& s = "█");
+    void draw(uint rowI, uint colI, Color color = White, wchar_t const& ch = L'█');
+    void clear();
 };
 
 #endif //COURSEWORK_BLOCKSWINDOW_H
