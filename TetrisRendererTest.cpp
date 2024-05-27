@@ -39,7 +39,7 @@ int main(int argc, char const * const * argv) {
         tr.setScore(randScore(engine));
         tr.drawScore(static_cast<Color>(randColor(engine)), static_cast<Color>(randColor(engine)));
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(3));
+        std::this_thread::sleep_for(std::chrono::milliseconds(30));
     }
 
     ir.resetFlags();
