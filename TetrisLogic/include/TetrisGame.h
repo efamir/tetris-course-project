@@ -22,9 +22,7 @@ class TetrisGame {
     std::unique_ptr<Figure> generateNewFigure();
     void putNextFigure();
     bool checkOnGameOver();
-    void updateScore(int valueToAdd);
-    void saveScore();
-    void clearRow(int i);
+    void clearRow(std::vector<int> &rowsIndex);
     void moveBlocksDown(int i);
     void reDrawField();
     void processUserInput(char ch,double &diffCheck, int &gameFinish,double minTime,double reduceTime);
@@ -32,7 +30,7 @@ class TetrisGame {
     void fallDawnOverTime(double &diffCheck, int &gameFinish,bool &flag,std::chrono::time_point<std::chrono::system_clock> start,double minTime,double reduceTime);
     void checkOnFullRows();
 public:
-    TetrisGame(InputReader &inputReader, TetrisRenderer &tetrisRenderer);
+    TetrisGame(TetrisRenderer &tetrisRenderer, InputReader &inputReader);
     GameFinishStatus run();
 };
 

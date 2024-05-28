@@ -9,13 +9,8 @@
 #include "../include/Figures/Ttetromino.h"
 #include "../../Utils/include/ConfigReader.h"
 
-TetrisGame::TetrisGame(InputReader &inputReader, TetrisRenderer &tetrisRenderer) : inputReader(inputReader),
-                                                                                   tetrisRenderer(tetrisRenderer) {
-    for (int i = 0; i < 22; ++i)
-        for (int j = 0; j < 10; ++j)
-            field[i][j] = Black;
-    nextFigure = generateNewFigure();//ініціалізуємо наступну фігуру
-    putNextFigure();//робимо наступну фігуру теперішньою фігурою і генеруємо нову наступну фігуру
+TetrisGame::TetrisGame(TetrisRenderer &tetrisRenderer, InputReader &inputReader) : tetrisRenderer(tetrisRenderer),
+                                                                                   inputReader(inputReader) {
     score = 0;
     ConfigReader *configReader = ConfigReader::getInstance();
     difficulty = configReader->getDifficulty();
@@ -78,6 +73,9 @@ void TetrisGame::reDrawField() {
 
 void TetrisGame::checkOnFullRows() {
     std::vector<int> rowsIndex;
+
+    while (inputReader.readNextChar() > 0) {}
+
     for (int i = 0; i < 22; i++) {
         bool isFull = true;
         for (int j = 0; j < 10; j++) {
@@ -92,23 +90,43 @@ void TetrisGame::checkOnFullRows() {
     }
 
     if (rowsIndex.empty()) { return; }
-    //todo зробити додавання рахунку та врахувати бустер
     double bonus = 100 * rowsIndex.size() + 100 * difficulty;
-    for (int index: rowsIndex) {
-        score += 1000 + bonus;
-        clearRow(index);
-    }
+    score += (1000 + bonus) * rowsIndex.size();
+
+    clearRow(rowsIndex);
+
     tetrisRenderer.setScore(score);
     tetrisRenderer.drawScore();
 }
 
-void TetrisGame::clearRow(int i) {
-    for (int j = 0; j < 10; j++) {
-        field[i][j] = Black;
-        if (i <= 1) { continue; }
-        tetrisRenderer.drawTetrisWindowBlock(i - 2, j, field[i][j]);
+void TetrisGame::clearRow(std::vector<int> &rowsIndex) {
+    int waitMls = 125 - difficulty*10;
+
+    for (int j = 0; j < 2; j++) {
+        for (int i: rowsIndex) {
+            for (int k = 0; k < 10; k++) {
+                if (i <= 1) { continue; }
+                tetrisRenderer.drawTetrisWindowBlock(i - 2, k, field[i][k],L'░');
+            }
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(waitMls));
+        for (int i: rowsIndex) {
+            for (int k = 0; k < 10; k++) {
+                if (i <= 1) { continue; }
+                tetrisRenderer.drawTetrisWindowBlock(i - 2, k, field[i][k]);
+            }
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(waitMls));
     }
-    moveBlocksDown(i);
+
+    for (int i: rowsIndex) {
+        for (int j = 0; j < 10; j++) {
+            field[i][j] = Black;
+            if (i <= 1) { continue; }
+            tetrisRenderer.drawTetrisWindowBlock(i - 2, j, field[i][j]);
+        }
+        moveBlocksDown(i);
+    }
 }
 
 void TetrisGame::moveBlocksDown(int row) {
@@ -116,7 +134,6 @@ void TetrisGame::moveBlocksDown(int row) {
                       2; i--) {
         for (int j = 0; j < 10; j++) {
             field[i][j] = field[i - 1][j];
-            //if (i < 2) { continue; }
             tetrisRenderer.drawTetrisWindowBlock(i - 2, j, field[i][j]);
         }
     }
@@ -131,16 +148,22 @@ GameFinishStatus TetrisGame::run() {
     double defaultMinDelay = 100;//100
     double reduceTime = 1;//10
 
-    double startDelay = defaultMinDelay + ((defaultMaxDelay - defaultMinDelay)/(5-1))*(5-difficulty);
+    double startDelay = defaultMinDelay + ((defaultMaxDelay - defaultMinDelay) / (5 - 1)) * (5 - difficulty);
     double diffCheck = startDelay;
 
-
+    score = 0;
     char ch;
     bool flag = false;
     int gameFinish = -1;
     std::chrono::time_point<std::chrono::system_clock> start;
     ConfigReader *configReader = ConfigReader::getInstance();
 
+    for (int i = 0; i < 22; ++i)
+        for (int j = 0; j < 10; ++j)
+            field[i][j] = Black;
+    nextFigure = generateNewFigure();//ініціалізуємо наступну фігуру
+    putNextFigure();//робимо наступну фігуру теперішньою фігурою і генеруємо нову наступну фігуру
+    reDrawField();
 
     try {
         while (true) {
@@ -153,18 +176,15 @@ GameFinishStatus TetrisGame::run() {
             if ((ch = inputReader.readNextChar()) > 0) {
                 processUserInput(ch, diffCheck, gameFinish, defaultMinDelay, reduceTime);
             }
-            if (gameFinish >= 0) {
-                if(score > configReader->getBestScore()){
-                    configReader->setBestScore(score);
-                }
-                return static_cast<GameFinishStatus>(gameFinish); }
 
             fallDawnOverTime(diffCheck, gameFinish, flag, start, defaultMinDelay, reduceTime);
+
             if (gameFinish >= 0) {
-                if(score > configReader->getBestScore()){
+                if (score > configReader->getBestScore()) {
                     configReader->setBestScore(score);
                 }
-                return static_cast<GameFinishStatus>(gameFinish); }
+                return static_cast<GameFinishStatus>(gameFinish);
+            }
 
         }
     } catch (std::runtime_error const &e) {
@@ -174,7 +194,7 @@ GameFinishStatus TetrisGame::run() {
         inputReader.resetFlags();
     }
 
-    if(score > configReader->getBestScore()){
+    if (score > configReader->getBestScore()) {
         configReader->setBestScore(score);
     }
     return GameFinishStatus::GameOver;
@@ -205,12 +225,13 @@ void TetrisGame::processUserInput(char ch, double &diffCheck, int &gameFinish, d
             currentFigure->moveRight();
             break;
         case ' ':
-            currentFigure->dropDown();
+            currentFigure->dropDown(score,difficulty);
             checkOnFullRows();
             putNextFigure();
             break;
         case 'q':
             gameFinish = 0;
+            tetrisRenderer.drawGameOver();
             break;
         case 'r':
             gameFinish = 1;
@@ -232,6 +253,7 @@ void TetrisGame::gamePause(int &gameFinish) {
             switch (ch) {
                 case 'q':
                     gameFinish = 0;
+                    tetrisRenderer.drawGameOver();
                     return;
                 case 'r':
                     gameFinish = 1;
@@ -272,5 +294,3 @@ void TetrisGame::fallDawnOverTime(double &diffCheck, int &gameFinish, bool &flag
         flag = !flag;
     }
 }
-
-

@@ -5,9 +5,10 @@ coords::coords(int i, int j) {
     this->j = j;
 }
 
+
 std::random_device rd;
 std::mt19937 engine{rd()};
-std::uniform_int_distribution<int> randColor{2, 14 - 2};
+std::uniform_int_distribution<int> randColor{2, 14 - 3};
 
 
 Figure::Figure(Color (&field)[22][10], TetrisRenderer &tetrisRenderer, Color color) : field(field), color(color),
@@ -134,7 +135,7 @@ void Figure::draw() {
 }
 
 void Figure::drawAsNextFigure() {
-    for(int i = 0; i < 4;i++){
+    for (int i = 0; i < 4; i++) {
         tetrisRenderer.drawNextItemWindowBlock(0, i, Black);
         tetrisRenderer.drawNextItemWindowBlock(1, i, Black);
     }
@@ -148,6 +149,17 @@ void Figure::dropDown() {
         if (!moveDown()) { return; }
         std::this_thread::sleep_for(std::chrono::microseconds(20));
     }
+}
+
+void Figure::dropDown(unsigned int &score, int booster) {
+    while (true) {
+        if (!moveDown()) { return; }
+        score += (booster);
+        tetrisRenderer.setScore(score);
+        tetrisRenderer.drawScore();
+        std::this_thread::sleep_for(std::chrono::microseconds(20));
+    }
+
 }
 
 Figure::~Figure() {

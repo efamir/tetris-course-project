@@ -37,6 +37,7 @@ public:
     void draw();
     void drawAsNextFigure();
     void dropDown();
+    void dropDown(unsigned int &score,int booster);
     virtual ~Figure();
 };
 
