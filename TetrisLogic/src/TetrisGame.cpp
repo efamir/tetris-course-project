@@ -253,7 +253,7 @@ void TetrisGame::gamePause(int &gameFinish) {
             switch (ch) {
                 case 'q':
                     gameFinish = 0;
-                    tetrisRenderer.drawGameOver();
+
                     return;
                 case 'r':
                     gameFinish = 1;
