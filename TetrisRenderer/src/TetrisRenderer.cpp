@@ -1,4 +1,5 @@
 #include "../include/TetrisRenderer.h"
+#include "../../Utils/include/ConfigReader.h"
 
 
 struct DefaultParams {
@@ -28,7 +29,7 @@ TetrisRenderer::TetrisRenderer()
     : _cursor(Cursor(DefaultParams::c, DefaultParams::r, DefaultParams::getStream())),
     _bg(DefaultParams::getDefaultColors()),
     _tw(_cursor), _niw(_cursor),
-    _sw(_cursor, DefaultParams::score, DefaultParams::bestScore),
+    _sw(_cursor, DefaultParams::score, ConfigReader::getInstance()->getBestScore()),
     _gsd(_cursor) {
     DefaultParams::getStream() << std::unitbuf;
 }

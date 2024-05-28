@@ -20,6 +20,4 @@ public:
     static void loadCS();
 };
 
-// extern const std::map<Color, std::wstring> ColorANSI;
-
 #endif //COURSEWORK_COLOR_H
