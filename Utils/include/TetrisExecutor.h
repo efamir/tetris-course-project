@@ -4,7 +4,7 @@
 #include "../../TetrisRenderer/include/TetrisRenderer.h"
 #include "../include/InputReader.h"
 #include "../include/ConfigReader.h"
-
+#include "../../TetrisLogic/include/TetrisGame.h"
 
 class TetrisExecutor {
     TetrisRenderer _tetrisRenderer;

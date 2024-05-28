@@ -2,7 +2,7 @@
 #include <getopt.h>
 
 #include "Utils/include/ConfigReader.h"
-// #include "Utils/include/TetrisExecutor.h"
+#include "Utils/include/TetrisExecutor.h"
 #include <chrono>
 #include <thread>
 #include "TetrisRenderer/include/CursorManipulations.h"
@@ -33,18 +33,17 @@ void print_usage() {
 }
 
 int main(int argc, char* argv[]) {
+    std::setlocale(LC_ALL, "");
     option options[] = {
             {"difficulty", required_argument, 0, 'd'},
             {"colorScheme", required_argument, 0, 'c'},
             {"resetConfig", no_argument, 0, 'r'},
             {"resetBestScore", no_argument, 0, 'b'},
-            {"saveConfig", no_argument, 0, 's'},
             {"help", no_argument, 0, 'h'},
             {0, 0, 0, 0}
     };
     int option;
     int optionIndex;
-    bool saveConfigChanges = false;
 
     const char * configFile = "config.txt";
     ConfigReader * configReader = ConfigReader::getInstance(configFile);
@@ -76,32 +75,27 @@ int main(int argc, char* argv[]) {
             case 'b':
                 configReader->setBestScore(0);
                 break;
-            case 's':
-                saveConfigChanges = true;
-                break;
         }
     }
 
     int targetParamsRead = 3;
     int secondShowingInfo = 3;
     if (paramsRead == -1) {
-        std::cout << "Couldn't open config file. Continuing with passed/default params." << std::flush;
+        std::wcout << "Couldn't open config file. Continuing with passed/default params." << std::flush;
         std::this_thread::sleep_for(std::chrono::seconds(secondShowingInfo));
         ANSIClearLine(std::wcout);
     } else if (paramsRead < targetParamsRead) {
-        std::cout << "Couldn't read " << targetParamsRead - paramsRead
+        std::wcout << "Couldn't read " << targetParamsRead - paramsRead
                   << " params. Continuing with passed/default params." << std::flush;
         std::this_thread::sleep_for(std::chrono::seconds(secondShowingInfo));
         ANSIClearLine(std::wcout);
     }
 
-    if (saveConfigChanges) configReader->saveConfigData();
+    TetrisExecutor tetrisExecutor;
+    tetrisExecutor.initEverything();
+    tetrisExecutor.runTetrisLoop();
 
-    std::cout << "Best score: " << configReader->getBestScore() << "\n";
-    std::cout << "Cs: " <<  configReader->getColorScheme() << "\n";
-    std::cout << "Difficulty: " << configReader->getDifficulty() << "\n";
-//     TetrisExecutor tetrisExecutor;
-//     tetrisExecutor.runTetrisLoop();
+    configReader->saveConfigData();
 
     return 0;
 }

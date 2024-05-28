@@ -1,9 +1,8 @@
 #include "../include/TetrisExecutor.h"
 
-TetrisExecutor::TetrisExecutor() = default; // todo init TetrisLogic with TetrisRender;
+TetrisExecutor::TetrisExecutor() = default;
 
 void TetrisExecutor::initEverything() {
-    std::setlocale(LC_ALL, "");
     _tetrisRenderer.initDraw();
     _inputReader.setFlags();
 }
@@ -13,20 +12,25 @@ TetrisExecutor::~TetrisExecutor() {
 }
 
 void TetrisExecutor::runTetrisLoop() {
-    // GameFinishStatus gameStatus;
-    // char inpChar;
-    // while ((gameStatus = TetrisLogic.run()) != Exit) {
-    //     if (gameStatus = Restart) continue;
-    //     tetrisRenderer.drawGameOver();
-    //     while (true) {
-    //
-    //         while ((inpChar = inputReader.readNextChar()) == -1) {}
-    //         swith (inpChar) {
-    //             case 'q':
-    //                  return;
-    //             case 'r':
-    //                  break;
-    //         }
-    //      }
-    // }
+    GameFinishStatus gameStatus;
+    char inpChar;
+    TetrisGame tetrisGame(_tetrisRenderer, _inputReader);
+    while ((gameStatus = tetrisGame.run()) != Exit) {
+        if (gameStatus == Restart) continue;
+        _tetrisRenderer.drawGameOver();
+        while (true) {
+            while ((inpChar = _inputReader.readNextChar()) == -1) {}
+            bool breakLoop = false;
+            switch (inpChar) {
+                case 'q':
+                    _tetrisRenderer.drawGameOver();
+                    return;
+                case 'r':
+                    breakLoop = true;
+                    break;
+            }
+            if (breakLoop) break;
+        }
+    }
+    _tetrisRenderer.drawGameOver();
 }
