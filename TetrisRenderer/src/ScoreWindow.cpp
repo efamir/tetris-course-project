@@ -1,5 +1,11 @@
 #include "../include/ScoreWindow.h"
 
+namespace {
+    constexpr uint TOTAL_SCORE_ROW = 3;
+    constexpr uint BEST_SCORE_ROW = 1;
+    constexpr uint TOTAL_SCORE_TEXT_ROW = 2;
+}
+
 ScoreWindow::ScoreWindow(Cursor & cursor, uint score, uint bestScore, ScoreCoord coord)
 : _cursor(cursor), _score(score), _bestScore(bestScore), _x(coord.x), _y(coord.y) {
     if (_score > _bestScore) {
@@ -43,7 +49,7 @@ void ScoreWindow::draw(Color scoreColor, Color bestScoreColor) {
                 _cursor.fill(c, bestScoreColor, false);
             }
 
-            _cursor.moveTo(_x, _y + 2);
+            _cursor.moveTo(_x, _y + TOTAL_SCORE_TEXT_ROW);
             for (char c: _totalScoreText) {
                 _cursor.fill(c, scoreColor, false);
             }
@@ -52,9 +58,10 @@ void ScoreWindow::draw(Color scoreColor, Color bestScoreColor) {
         }
 
         if (_bestScoreChanged) {
-            _cursor.moveTo(_x, _y + 1);
+            _cursor.moveTo(_x, _y + BEST_SCORE_ROW);
 
-            for (char c: std::to_string(_bestScore)) {
+            std::string scoreStr = std::to_string(_bestScore);
+            for (char c: scoreStr + std::string(WIDTH - scoreStr.length(), ' ')) {
                 _cursor.fill(c, bestScoreColor, false);
             }
 
@@ -62,10 +69,11 @@ void ScoreWindow::draw(Color scoreColor, Color bestScoreColor) {
         }
 
         if (_totalScoreChanged) {
-            _cursor.moveTo(_x, _y + 3);
+            _cursor.moveTo(_x, _y + TOTAL_SCORE_ROW);
 
-            for (char c: std::to_string(_score)) {
-                _cursor.fill(c, scoreColor, false);
+            std::string scoreStr = std::to_string(_score);
+            for (char c: scoreStr + std::string(WIDTH - scoreStr.length(), ' ')) {
+                _cursor.fill(c, bestScoreColor, false);
             }
 
             _totalScoreChanged = false;

@@ -3,7 +3,17 @@
 
 uint ColorANSI::_currentCS = 0;
 
-const std::vector<std::map<Color, std::wstring>> ColorANSI::_colorSchemes = {
+std::wstring ColorANSI::get(Color const color) {
+    if (color == BgReset) return L"\x1b[49m";
+    return ColorANSI::_colorSchemes[ColorANSI::_currentCS].at(color);
+}
+
+void ColorANSI::loadCS() {
+    ConfigReader * configReader = ConfigReader::getInstance();
+    _currentCS = configReader->getColorScheme();
+}
+
+const std::vector<std::map<Color, const std::wstring>> ColorANSI::_colorSchemes = {
         { // Default
             {Black, L"\x1b[30m"},       // Black
             {BgBlack, L"\x1b[40m"},  // Black
@@ -214,13 +224,3 @@ const std::vector<std::map<Color, std::wstring>> ColorANSI::_colorSchemes = {
             {BWhite,    L"\033[38;5;231m"}, // #fefefe
         },
 };
-
-std::wstring ColorANSI::get(Color const color) {
-    if (color == BgReset) return L"\x1b[49m";
-    return ColorANSI::_colorSchemes[ColorANSI::_currentCS].at(color);
-}
-
-void ColorANSI::loadCS() {
-    ConfigReader * configReader = ConfigReader::getInstance();
-    _currentCS = configReader->getColorScheme();
-}

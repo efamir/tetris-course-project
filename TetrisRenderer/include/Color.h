@@ -14,7 +14,7 @@ enum Color {
 class ColorANSI {
 protected:
     static uint _currentCS;
-    static const std::vector<std::map<Color, std::wstring>> _colorSchemes;
+    static const std::vector<std::map<Color, const std::wstring>> _colorSchemes;
 public:
     static std::wstring get(Color const color);
     static void loadCS();

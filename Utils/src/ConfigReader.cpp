@@ -3,34 +3,38 @@
 #include <unordered_map>
 
 namespace {
+    const std::string BEST_SCORE_STR = "bestScore";
+    const std::string DIFFICULTY_STR = "difficulty";
+    const std::string COLOR_SCHEME_STR = "colorScheme";
 
-std::unordered_map<std::string, ConfigOptions> optionsStringMap = {
-    {"bestScore", BestScore},
-    {"difficulty", Difficulty},
-    {"colorScheme", ColorScheme},
-};
+    constexpr char DELIM_CHAR = '=';
 
-int convertIntToStr(std::string const& str) {
-    try {
-        size_t pos;
-        int n = std::stoi(str, &pos);
-
-        if (pos < str.size()) return -1;
-        if (n < 0) return -2;
-        return n;
-    } catch (std::invalid_argument const& e) {
-        return -1;
-    } catch (std::out_of_range const& e) {
-        return -2;
-    }
-}
-    struct ParamLimits {
-        ParamLimits(uint dMin = 0, uint dMax = 5, uint csMin_ = 0, uint csMax_ = 10)
-                : difficultyMin(dMin), difficultyMax(dMax), csMin(csMin_), csMax(csMax_) {}
-        const uint difficultyMin, difficultyMax, csMin, csMax;
+    const std::unordered_map<std::string, ConfigOptions> optionsStringMap = {
+        {BEST_SCORE_STR, BestScore},
+        {DIFFICULTY_STR, Difficulty},
+        {COLOR_SCHEME_STR, ColorScheme},
     };
 
-    ParamLimits defaultParams(0, 5, 0, 10); // todo change later
+    int convertIntToStr(std::string const& str) {
+        constexpr int TOO_LARGE_NUMBER = -2;
+        constexpr int INVALID_FORMAT = -1;
+        constexpr int NEGATIVE_NUMBER = -3;
+
+        try {
+            size_t pos;
+            int n = std::stoi(str, &pos);
+
+            if (pos < str.size()) return INVALID_FORMAT;
+            if (n < 0) return NEGATIVE_NUMBER;
+            return n;
+        } catch (std::invalid_argument const& e) {
+            return INVALID_FORMAT;
+        } catch (std::out_of_range const& e) {
+            return TOO_LARGE_NUMBER;
+        }
+    }
+
+    constexpr uint DIFFICULTY_MIN = 1, DIFFICULTY_MAX = 5, CS_MIN = 0, CS_MAX = 10;
 }
 
 ConfigReader * ConfigReader::_instance = nullptr;
@@ -61,7 +65,7 @@ int ConfigReader::loadConfigData() {
 
     int readParamsCount = 0;
     while ((file >> std::ws).good()) {
-        if (!std::getline(file, key, '=').good()) break;
+        if (!std::getline(file, key, DELIM_CHAR).good()) break;
 
         auto found = optionsStringMap.find(key);
 
@@ -87,11 +91,11 @@ bool ConfigReader::validateAndUpdateData(ConfigOptions option, const std::string
             _bestScore = n;
             break;
         case Difficulty:
-            if (n < defaultParams.difficultyMin || n > defaultParams.difficultyMax) return false;
+            if (n < DIFFICULTY_MIN || n > DIFFICULTY_MAX) return false;
             _difficulty = n;
             break;
         case ColorScheme:
-            if (n < defaultParams.csMin || n > defaultParams.csMax) return false;
+            if (n < CS_MIN || n > CS_MAX) return false;
             _colorScheme = n;
             break;
         case FileDrawersNames:
@@ -113,13 +117,13 @@ bool ConfigReader::setBestScore(uint newBestScore) {
 }
 
 bool ConfigReader::setDifficulty(uint difficulty) {
-    if (difficulty < defaultParams.difficultyMin || difficulty > defaultParams.difficultyMax) return false;
+    if (difficulty < DIFFICULTY_MIN || difficulty > DIFFICULTY_MAX) return false;
     _difficulty = difficulty;
     return true;
 }
 
 bool ConfigReader::setColorScheme(uint cs) {
-    if (cs < defaultParams.csMin || cs > defaultParams.csMax) return false;
+    if (cs < CS_MIN || cs > CS_MAX) return false;
     _colorScheme = cs;
     return true;
 }
@@ -128,11 +132,11 @@ bool ConfigReader::saveConfigData() {
     std::ofstream file(_fileName);
     if (!file.is_open()) return false;
 
-    file << "bestScore=" << _bestScore << "\n"; // todo remove hardcode
+    file << BEST_SCORE_STR << DELIM_CHAR << _bestScore << '\n';
     if (!file.good()) return false;
-    file << "difficulty=" << _difficulty << "\n";
+    file << DIFFICULTY_STR << DELIM_CHAR << _difficulty << '\n';
     if (!file.good()) return false;
-    file << "colorScheme=" << _colorScheme << "\n";
+    file << COLOR_SCHEME_STR << DELIM_CHAR << _colorScheme << '\n';
     if (!file) return false;
     file.close();
     if (!file) return false;

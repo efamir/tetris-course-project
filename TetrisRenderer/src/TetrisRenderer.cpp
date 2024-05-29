@@ -1,35 +1,36 @@
 #include "../include/TetrisRenderer.h"
 #include "../../Utils/include/ConfigReader.h"
 
+namespace {
+    struct DefaultParams {
+        static constexpr int COLS = 43, ROWS = 22, SCORE = 0, BEST_SCORE = 0;
 
-struct DefaultParams {
-    static constexpr int c = 43, r = 22, score = 0, bestScore = 0; // 33
+        static BackGroundColors getDefaultColors() {
+            BackGroundColors defaultColors;
+            defaultColors.interWindowColor = Cyan;
+            defaultColors.tetrisBackgroundColor = Black;
+            defaultColors.scoreWindowBackgroundColor = Black;
+            defaultColors.nextPieceBackgroundColor = Black;
+            return defaultColors;
+        }
 
-    static BackGroundColors getDefaultColors() {
-        BackGroundColors defaultColors;
-        defaultColors.interWindowColor = Cyan;
-        defaultColors.tetrisBackgroundColor = Black;
-        defaultColors.scoreWindowBackgroundColor = Black;
-        defaultColors.nextPieceBackgroundColor = Black;
-        return defaultColors;
-    }
+        static std::wostream & getStream() {
+            return _stream;
+        }
 
-    static std::wostream & getStream() {
-        return _stream;
-    }
-
-private:
-    static std::wostream & _stream;
-};
+    private:
+        static std::wostream & _stream;
+    };
+}
 
 std::wostream & DefaultParams::_stream = std::wcout;
 
 
 TetrisRenderer::TetrisRenderer()
-    : _cursor(Cursor(DefaultParams::c, DefaultParams::r, DefaultParams::getStream())),
+    : _cursor(Cursor(DefaultParams::COLS, DefaultParams::ROWS, DefaultParams::getStream())),
     _bg(DefaultParams::getDefaultColors()),
     _tw(_cursor), _niw(_cursor),
-    _sw(_cursor, DefaultParams::score, ConfigReader::getInstance()->getBestScore()),
+    _sw(_cursor, DefaultParams::SCORE, ConfigReader::getInstance()->getBestScore()),
     _gsd(_cursor) {
     DefaultParams::getStream() << std::unitbuf;
 }
@@ -37,14 +38,14 @@ TetrisRenderer::TetrisRenderer()
 TetrisRenderer::~TetrisRenderer() {
     DefaultParams::getStream() << ColorANSI::get(BgReset);
     _cursor.moveTo();
-    ANSICursorDown(DefaultParams::getStream(), DefaultParams::r);
+    ANSICursorDown(DefaultParams::getStream(), DefaultParams::ROWS);
     DefaultParams::getStream() << "\r";
 }
 
 void TetrisRenderer::setCursorUnderTheGame() {
     try {
         _cursor.moveTo();
-        ANSICursorDown(DefaultParams::getStream(), DefaultParams::r);
+        ANSICursorDown(DefaultParams::getStream(), DefaultParams::ROWS);
     } catch (std::out_of_range const& e) {
         throw e;
     } catch (std::runtime_error const& e) {

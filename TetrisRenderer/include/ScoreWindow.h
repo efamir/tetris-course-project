@@ -3,11 +3,15 @@
 
 #include "Color.h"
 #include "Cursor.h"
-
 #include <iostream>
 #include <string>
 
 typedef unsigned int uint;
+
+namespace ScoreWindowConsts {
+    constexpr uint SCORE_WINDOW_X = 21;
+    constexpr uint SCORE_WINDOW_Y = 0;
+}
 
 struct ScoreCoord {
     uint x, y;
@@ -18,13 +22,15 @@ struct ScoreCoord {
 class ScoreWindow {
     Cursor & _cursor;
     uint _score, _bestScore;
-    const uint scoreWindowWidth = 3;
+    constexpr static uint WIDTH = 9;
     const uint _x, _y;
     const std::string _totalScoreText = "Score";
     const std::string _bestScoreText = "Top";
     bool _textIsDrawn = false, _totalScoreChanged = true, _bestScoreChanged = true;
 public:
-    ScoreWindow(Cursor & cursor, uint score, uint bestScore, ScoreCoord coord = ScoreCoord(21, 0));
+    ScoreWindow(Cursor & cursor, uint score, uint bestScore,
+                ScoreCoord coord = ScoreCoord
+                        (ScoreWindowConsts::SCORE_WINDOW_X, ScoreWindowConsts::SCORE_WINDOW_Y));
 
     void setScore(uint score);
     void setBestScore(uint score);

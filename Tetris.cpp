@@ -8,17 +8,21 @@
 #include "TetrisRenderer/include/CursorManipulations.h"
 
 int convertIntToStr(std::string const& str) {
+    constexpr int TOO_LARGE_NUMBER = -2;
+    constexpr int INVALID_FORMAT = -1;
+    constexpr int NEGATIVE_NUMBER = -3;
+
     try {
         size_t pos;
         int n = std::stoi(str, &pos);
 
-        if (pos < str.size()) return -1;
-        if (n < 0) return -2;
+        if (pos < str.size()) return INVALID_FORMAT;
+        if (n < 0) return NEGATIVE_NUMBER;
         return n;
     } catch (std::invalid_argument const& e) {
-        return -1;
+        return INVALID_FORMAT;
     } catch (std::out_of_range const& e) {
-        return -2;
+        return TOO_LARGE_NUMBER;
     }
 }
 
@@ -28,7 +32,6 @@ void print_usage() {
     std::cout << " -c, --colorScheme <arg>  Set the color scheme\n";
     std::cout << " -r, --resetConfig        Reset the configuration\n";
     std::cout << " -b, --resetBestScore     Reset the best score\n";
-    std::cout << " -s, --saveConfig         Save the configuration\n";
     std::cout << " -h, --help               Display this help message\n";
 }
 
@@ -78,16 +81,16 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    int targetParamsRead = 3;
-    int secondShowingInfo = 3;
+    constexpr int TARGET_PARAMS_READ = 3;
+    constexpr int SECONDS_SHOWING_WARNING = 3;
     if (paramsRead == -1) {
         std::wcout << "Couldn't open config file. Continuing with passed/default params." << std::flush;
-        std::this_thread::sleep_for(std::chrono::seconds(secondShowingInfo));
+        std::this_thread::sleep_for(std::chrono::seconds(SECONDS_SHOWING_WARNING));
         ANSIClearLine(std::wcout);
-    } else if (paramsRead < targetParamsRead) {
-        std::wcout << "Couldn't read " << targetParamsRead - paramsRead
+    } else if (paramsRead < TARGET_PARAMS_READ) {
+        std::wcout << "Couldn't read " << TARGET_PARAMS_READ - paramsRead
                   << " params. Continuing with passed/default params." << std::flush;
-        std::this_thread::sleep_for(std::chrono::seconds(secondShowingInfo));
+        std::this_thread::sleep_for(std::chrono::seconds(SECONDS_SHOWING_WARNING));
         ANSIClearLine(std::wcout);
     }
 

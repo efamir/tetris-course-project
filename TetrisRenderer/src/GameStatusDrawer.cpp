@@ -2,13 +2,17 @@
 
 GameStatusDrawer::GameStatusDrawer(Cursor & cursor) : _cursor(cursor) {}
 
-void GameStatusDrawer::draw(const std::wstring &str, Color const& color) {
-    uint row = 2;
-    _cursor.moveTo(1, row);
+void GameStatusDrawer::draw(std::wstring const& str, Color const& color) {
+    constexpr uint START_DRAWING_AT_ROW_INDEX = 2;
+
+    uint row = START_DRAWING_AT_ROW_INDEX;
+
+    constexpr uint X_OFFSET = 1;
+    _cursor.moveTo(X_OFFSET, row);
 
     for (wchar_t const ch: str) {
         if (ch == L'\n') {
-            _cursor.moveTo(1, ++row);
+            _cursor.moveTo(X_OFFSET, ++row);
             continue;
         }
         _cursor.fill(ch, color, false);

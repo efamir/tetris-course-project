@@ -10,7 +10,7 @@
 
 typedef unsigned int uint;
 
-struct BackGroundColors { // can be rewritten to wide chars
+struct BackGroundColors {
     Color interWindowColor;
     Color tetrisBackgroundColor;
     Color nextPieceBackgroundColor;
@@ -18,13 +18,13 @@ struct BackGroundColors { // can be rewritten to wide chars
 };
 
 class BackGround {
-    const uint cols = 33, rows = 22;
-    const uint tetrisWindowWidth = 20, secondWindowWidth = 10;
-    const uint scoreWindowRows = 4, nextItemWindowRows = 4;
+    static constexpr uint COLS = 33, ROWS = 22;
+    static constexpr uint TETRIS_WINDOW_WIDTH = 20, SECOND_WINDOW_WIDTH = 10;
+    static constexpr uint SCORE_WINDOW_ROWS = 4, NEXT_ITEM_WINDOW_ROWS = 4;
     BackGroundColors _colors;
-    void drawSolidLine(std::wostream & stream, wchar_t const& ch, uint times = 1) const;
-    void drawWithTetrisBg(std::wostream & stream, wchar_t const& ch, uint times = 1) const;
-    void drawWithTwoBg(std::wostream & stream, wchar_t const& ch, Color secondBgColor, uint times = 1) const;
+    void drawSolidLine(std::wostream & stream, wchar_t const& ch, const uint times = 1) const;
+    void drawWithTetrisBg(std::wostream & stream, wchar_t const& ch, const uint times = 1) const;
+    void drawWithTwoBg(std::wostream & stream, wchar_t const& ch, Color secondBgColor, const uint times = 1) const;
 public:
     BackGround(BackGroundColors const& colors);
 

@@ -30,9 +30,10 @@ void InputReader::resetFlags() {
 
 char InputReader::readNextChar() {
     ssize_t bytes = read(STDIN_FILENO, &ch, 1);
-    if (bytes == 0) return -1;
+    constexpr int NO_NEW_INPUT = -1;
+    if (bytes == 0) return NO_NEW_INPUT;
     if (bytes == -1) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK) return -1;
+        if (errno == EAGAIN || errno == EWOULDBLOCK) return NO_NEW_INPUT;
         throw std::runtime_error("Something went wrong when reading in InputReader::readNextChar() method.\n");
     }
     return ch;

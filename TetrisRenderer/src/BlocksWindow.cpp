@@ -8,7 +8,7 @@ BlocksWindow::BlocksWindow(Cursor & cursor, uint rows, uint cols, uint x, uint y
     }
     if (rows == 0) {
         throw std::invalid_argument("Invalid argument was passed to BlocksWindow::BlocksWindow(): "
-                                    "Rows number must be non-negative.");
+                                    "Rows number must be non-zero.");
     }
 }
 
@@ -26,7 +26,8 @@ void BlocksWindow::draw(uint rowI, uint colI, Color color, wchar_t const& ch) {
     }
 
     try {
-        _cursor.moveTo(_x + colI * 2, _y + rowI);
+        constexpr uint BLOCK_WIDTH = 2;
+        _cursor.moveTo(_x + colI * BLOCK_WIDTH, _y + rowI);
         _cursor.fill(ch, color, false);
         _cursor.fill(ch, color);
     } catch (std::out_of_range const& e) {
