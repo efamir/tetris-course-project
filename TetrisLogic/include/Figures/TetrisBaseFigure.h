@@ -31,7 +31,7 @@ struct coords {
 
 namespace Random{
     extern std::mt19937 engine;
-    extern std::uniform_int_distribution<int> randColor;
+    extern std::uniform_int_distribution<int> randColor; // random colors generator
 }
 
 class Figure {
@@ -50,9 +50,10 @@ public:
     void moveLeft();
     void moveRight();
     bool moveDown();
-    void draw();
-    void drawAsNextFigure();
+    void draw() const;
+    void drawAsNextFigure() const;
     void dropDown();
+    // overloaded function to give ability to give extra points to the player for an early fall
     void dropDown(unsigned int &score,int booster);
     virtual ~Figure();
 };
