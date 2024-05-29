@@ -1,5 +1,4 @@
 #include "../include/TetrisGame.h"
-//#include "../include/Figures/TetrisBaseFigure.h"
 #include "../include/Figures/Itetromino.h"
 #include "../include/Figures/Jtetromino.h"
 #include "../include/Figures/Ltetromino.h"
@@ -17,8 +16,8 @@ TetrisGame::TetrisGame(TetrisRenderer &tetrisRenderer, InputReader &inputReader)
 }
 
 std::unique_ptr<Figure> TetrisGame::generateNewFigure() {
-    std::uniform_int_distribution<int> randFigure{0, 6};
-    int newFigure = randFigure(engine);
+    std::uniform_int_distribution<int> randFigure{0, TetrisInfo::NUM_OF_FIGURES};
+    int newFigure = randFigure(Random::engine);
     std::unique_ptr<Figure> ptr;
     switch (newFigure) {
         case 0:
@@ -52,21 +51,20 @@ void TetrisGame::putNextFigure() {
     currentFigure = std::move(nextFigure);
     nextFigure = generateNewFigure();
     nextFigure->drawAsNextFigure();
-
 }
 
 bool TetrisGame::checkOnGameOver() {
-    for (int j = 3; j < 7; j++) {
-        if (field[2][j] != Black)return true;
+    for (int j = TetrisInfo::COL_TO_CHECK_FROM_ON_GAME_OVER; j < TetrisInfo::COL_TO_CHECK_TO_ON_GAME_OVER; j++) {
+        if (field[TetrisInfo::ROW_TO_CHECK_ON_GAME_OVER][j] != Black)return true;
     }
     return false;
 }
 
 void TetrisGame::reDrawField() {
-    for (int i = 0; i < 22; i++) {
-        for (int j = 0; j < 10; j++) {
-            if (i <= 1)continue;
-            tetrisRenderer.drawTetrisWindowBlock(i - 2, j, field[i][j]);
+    for (int i = 0; i < FieldInfo::FIELD_ROWS; i++) {
+        for (int j = 0; j < FieldInfo::FIELD_COLS; j++) {
+            if (i < FieldInfo::ROW_COORDS_OFFSET)continue;
+            tetrisRenderer.drawTetrisWindowBlock(i - FieldInfo::ROW_COORDS_OFFSET, j, field[i][j]);
         }
     }
 }
@@ -76,9 +74,9 @@ void TetrisGame::checkOnFullRows() {
 
     while (inputReader.readNextChar() > 0) {}
 
-    for (int i = 0; i < 22; i++) {
+    for (int i = 0; i < FieldInfo::FIELD_ROWS; i++) {
         bool isFull = true;
-        for (int j = 0; j < 10; j++) {
+        for (int j = 0; j < FieldInfo::FIELD_COLS; j++) {
             if (field[i][j] == Black) {
                 isFull = false;
                 break;
@@ -90,8 +88,8 @@ void TetrisGame::checkOnFullRows() {
     }
 
     if (rowsIndex.empty()) { return; }
-    double bonus = 100 * rowsIndex.size() + 100 * difficulty;
-    score += (1000 + bonus) * rowsIndex.size();
+    double bonus = TetrisInfo::BONUS_POINTS_TO_ADD * rowsIndex.size() + TetrisInfo::BONUS_POINTS_TO_ADD * difficulty;
+    score += (TetrisInfo::POINTS_TO_ADD + bonus) * rowsIndex.size();
 
     clearRow(rowsIndex);
 
@@ -100,67 +98,68 @@ void TetrisGame::checkOnFullRows() {
 }
 
 void TetrisGame::clearRow(std::vector<int> &rowsIndex) {
-    int waitMls = 125 - difficulty*10;
+    int waitMls = TetrisInfo::CLEAR_ROW_DELAY - difficulty * TetrisInfo::CLEAR_ROW_DIFFICULTY_BOOST;
 
+    //анімація мигання ряду перед зникненням
     for (int j = 0; j < 2; j++) {
         for (int i: rowsIndex) {
-            for (int k = 0; k < 10; k++) {
-                if (i <= 1) { continue; }
-                tetrisRenderer.drawTetrisWindowBlock(i - 2, k, field[i][k],L'░');
+            for (int k = 0; k < FieldInfo::FIELD_COLS; k++) {
+                if (i < FieldInfo::ROW_COORDS_OFFSET) { continue; }
+                tetrisRenderer.drawTetrisWindowBlock(i - FieldInfo::ROW_COORDS_OFFSET, k, field[i][k], L'░');
             }
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(waitMls));
         for (int i: rowsIndex) {
-            for (int k = 0; k < 10; k++) {
-                if (i <= 1) { continue; }
-                tetrisRenderer.drawTetrisWindowBlock(i - 2, k, field[i][k]);
+            for (int k = 0; k < FieldInfo::FIELD_COLS; k++) {
+                if (i < FieldInfo::ROW_COORDS_OFFSET) { continue; }
+                tetrisRenderer.drawTetrisWindowBlock(i - FieldInfo::ROW_COORDS_OFFSET, k, field[i][k]);
             }
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(waitMls));
     }
-
+    //зникнення ряду
     for (int i: rowsIndex) {
-        for (int j = 0; j < 10; j++) {
+        for (int j = 0; j < FieldInfo::FIELD_COLS; j++) {
             field[i][j] = Black;
-            if (i <= 1) { continue; }
-            tetrisRenderer.drawTetrisWindowBlock(i - 2, j, field[i][j]);
+            if (i < FieldInfo::ROW_COORDS_OFFSET) { continue; }
+            tetrisRenderer.drawTetrisWindowBlock(i - FieldInfo::ROW_COORDS_OFFSET, j, field[i][j]);
         }
         moveBlocksDown(i);
     }
 }
 
 void TetrisGame::moveBlocksDown(int row) {
-    for (int i = row; i >
-                      2; i--) {
-        for (int j = 0; j < 10; j++) {
+    for (int i = row; i > FieldInfo::ROW_COORDS_OFFSET; i--) {
+        for (int j = 0; j < FieldInfo::FIELD_COLS; j++) {
             field[i][j] = field[i - 1][j];
-            tetrisRenderer.drawTetrisWindowBlock(i - 2, j, field[i][j]);
+            tetrisRenderer.drawTetrisWindowBlock(i - FieldInfo::ROW_COORDS_OFFSET, j, field[i][j]);
         }
     }
 
-    for (int j = 0; j < 10; j++) {
+    for (int j = 0; j < FieldInfo::FIELD_COLS; j++) {
         field[0][j] = Black;
     }
 }
 
 GameFinishStatus TetrisGame::run() {
-    double defaultMaxDelay = 500;//500
-    double defaultMinDelay = 100;//100
-    double reduceTime = 1;//10
-
-    double startDelay = defaultMinDelay + ((defaultMaxDelay - defaultMinDelay) / (5 - 1)) * (5 - difficulty);
+    double startDelay = TetrisInfo::defaultMinDelay + ((TetrisInfo::defaultMaxDelay - TetrisInfo::defaultMinDelay)
+            / (TetrisInfo::NUM_OF_DIFFICULTY_LEVELS - 1)) * (TetrisInfo::NUM_OF_DIFFICULTY_LEVELS - difficulty);
     double diffCheck = startDelay;
 
     score = 0;
+    tetrisRenderer.drawScore();
     char ch;
     bool flag = false;
     int gameFinish = -1;
     std::chrono::time_point<std::chrono::system_clock> start;
     ConfigReader *configReader = ConfigReader::getInstance();
 
-    for (int i = 0; i < 22; ++i)
-        for (int j = 0; j < 10; ++j)
+    for (int i = 0; i < FieldInfo::FIELD_ROWS; ++i) {//очищаємо поле
+        for (int j = 0; j < FieldInfo::FIELD_COLS; ++j) {
             field[i][j] = Black;
+        }
+    }
+
     nextFigure = generateNewFigure();//ініціалізуємо наступну фігуру
     putNextFigure();//робимо наступну фігуру теперішньою фігурою і генеруємо нову наступну фігуру
     reDrawField();
@@ -174,10 +173,10 @@ GameFinishStatus TetrisGame::run() {
             }
 
             if ((ch = inputReader.readNextChar()) > 0) {
-                processUserInput(ch, diffCheck, gameFinish, defaultMinDelay, reduceTime);
+                processUserInput(ch, diffCheck, gameFinish);
             }
 
-            fallDawnOverTime(diffCheck, gameFinish, flag, start, defaultMinDelay, reduceTime);
+            fallDownOverTime(diffCheck, gameFinish, flag, start);
 
             if (gameFinish >= 0) {
                 if (score > configReader->getBestScore()) {
@@ -200,7 +199,7 @@ GameFinishStatus TetrisGame::run() {
     return GameFinishStatus::GameOver;
 }
 
-void TetrisGame::processUserInput(char ch, double &diffCheck, int &gameFinish, double minTime, double reduceTime) {
+void TetrisGame::processUserInput(char ch, double &diffCheck, int &gameFinish) {
     switch (ch) {
         case 'w':
             currentFigure->rotate();
@@ -213,11 +212,11 @@ void TetrisGame::processUserInput(char ch, double &diffCheck, int &gameFinish, d
             if (!figureStoped) {
                 if (checkOnGameOver()) {
                     tetrisRenderer.drawGameOver();
-                    gameFinish = 2;
+                    gameFinish = GameOver;
                 }
                 checkOnFullRows();
                 putNextFigure();
-                if (diffCheck >= minTime) { diffCheck -= reduceTime; }
+                if (diffCheck >= TetrisInfo::defaultMinDelay) { diffCheck -= TetrisInfo::reduceTime; }
             }
             break;
         }
@@ -225,16 +224,20 @@ void TetrisGame::processUserInput(char ch, double &diffCheck, int &gameFinish, d
             currentFigure->moveRight();
             break;
         case ' ':
-            currentFigure->dropDown(score,difficulty);
+            currentFigure->dropDown(score, difficulty);
+            if (checkOnGameOver()) {
+                tetrisRenderer.drawGameOver();
+                gameFinish = GameOver;
+            }
             checkOnFullRows();
             putNextFigure();
             break;
         case 'q':
-            gameFinish = 0;
+            gameFinish = Exit;
             tetrisRenderer.drawGameOver();
             break;
         case 'r':
-            gameFinish = 1;
+            gameFinish = Restart;
             break;
         case 'p':
             gamePause(gameFinish);
@@ -249,14 +252,14 @@ void TetrisGame::gamePause(int &gameFinish) {
     char ch;
 
     while (true) {
-        if ((ch = inputReader.readNextChar()) > 0) { // HERE
+        if ((ch = inputReader.readNextChar()) > 0) {
             switch (ch) {
                 case 'q':
-                    gameFinish = 0;
-                    tetrisRenderer.drawGameOver();
+                    gameFinish = Exit;
+
                     return;
                 case 'r':
-                    gameFinish = 1;
+                    gameFinish = Restart;
                     return;
                 case 'p':
                     reDrawField();
@@ -268,29 +271,25 @@ void TetrisGame::gamePause(int &gameFinish) {
     }
 }
 
-void TetrisGame::fallDawnOverTime(double &diffCheck, int &gameFinish, bool &flag,
-                                  std::chrono::time_point<std::chrono::system_clock> start, double minTime,
-                                  double reduceTime) {
+void TetrisGame::fallDownOverTime(double &diffCheck, int &gameFinish, bool &flag,
+                                  std::chrono::time_point<std::chrono::system_clock> start) {
     auto dif =
             std::chrono::duration_cast<std::chrono::milliseconds>(
                     std::chrono::system_clock::now() - start).count();
 
     if (dif > diffCheck) {
-        bool figureStoped = currentFigure->moveDown();
+        bool figureStoped = !currentFigure->moveDown();
 
-        if (!figureStoped) {
-
+        if (figureStoped) {
             if (checkOnGameOver()) {
                 tetrisRenderer.drawGameOver();
-                gameFinish = 2;
+                gameFinish = GameOver;
             }
-
             checkOnFullRows();
             putNextFigure();
 
-            if (diffCheck >= minTime) { diffCheck -= reduceTime; }
+            if (diffCheck >= TetrisInfo::defaultMinDelay) { diffCheck -= TetrisInfo::reduceTime; }
         }
-
         flag = !flag;
     }
 }
