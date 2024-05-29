@@ -147,6 +147,7 @@ GameFinishStatus TetrisGame::run() {
     double diffCheck = startDelay;
 
     score = 0;
+    tetrisRenderer.setScore(score);
     tetrisRenderer.drawScore();
     char ch;
     bool flag = false;
