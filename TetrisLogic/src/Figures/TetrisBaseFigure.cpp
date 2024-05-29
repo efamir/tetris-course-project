@@ -1,21 +1,22 @@
 #include "../../include/Figures/TetrisBaseFigure.h"
 
+namespace {
+    std::random_device rd;
+}
+namespace Random {
+    std::mt19937 engine{rd()};
+    std::uniform_int_distribution<int> randColor{FieldInfo::COLOR_FROM, FieldInfo::COLOR_TO};
+}
+
 coords::coords(int i, int j) {
     this->i = i;
     this->j = j;
 }
 
-
-std::random_device rd;
-std::mt19937 engine{rd()};
-std::uniform_int_distribution<int> randColor{2, 14 - 3};
-
-
-Figure::Figure(Color (&field)[22][10], TetrisRenderer &tetrisRenderer, Color color) : field(field), color(color),
-                                                                                      tetrisRenderer(tetrisRenderer) {
-    for (coords ij: blockCoordsList) {
-        field[ij.i][ij.j] = color;
-    }
+Figure::Figure(Color (&field)[FieldInfo::FIELD_ROWS][FieldInfo::FIELD_COLS], TetrisRenderer &tetrisRenderer,
+               Color color)
+        : field(field), color(color),
+          tetrisRenderer(tetrisRenderer) {
 }
 
 void Figure::rotate() {
@@ -49,7 +50,7 @@ bool Figure::moveDown() {
     std::vector<coords> temp(blockCoordsList);
 
     for (coords &coord: temp) {
-        coord.i += 1;
+        coord.i++;
     }
 
     if (!checkMoveLegalness(temp)) { return false; }
@@ -69,7 +70,7 @@ void Figure::moveLeft() {
     std::vector<coords> temp(blockCoordsList);
 
     for (coords &coord: temp) {
-        coord.j -= 1;
+        coord.j--;
     }
 
     if (!checkMoveLegalness(temp)) { return; }
@@ -90,7 +91,7 @@ void Figure::moveRight() {
     std::vector<coords> temp(blockCoordsList);
 
     for (coords &coord: temp) {
-        coord.j += 1;
+        coord.j++;
     }
 
     if (!checkMoveLegalness(temp)) { return; }
@@ -107,15 +108,15 @@ void Figure::moveRight() {
     return;
 }
 
-bool Figure::checkMoveLegalness(std::vector<coords> newCoords) {
-    for (coords &coord: newCoords) {
-        if (coord.i > 21 || coord.j > 9) { return false; }
+bool Figure::checkMoveLegalness(const std::vector<coords> &newCoords) const {
+    for (coords const &coord: newCoords) {
+        if (coord.i >= FieldInfo::FIELD_ROWS || coord.j >= FieldInfo::FIELD_COLS) { return false; }
         if (coord.i < 0 || coord.j < 0) { return false; }
         if (field[coord.i][coord.j] == Black) {
             continue;
         }
         bool flag = true;
-        for (coords &oldCoord: blockCoordsList) {
+        for (coords const &oldCoord: blockCoordsList) {
             if (oldCoord.i == coord.i && oldCoord.j == coord.j) {
                 flag = false;
                 break;
@@ -129,25 +130,26 @@ bool Figure::checkMoveLegalness(std::vector<coords> newCoords) {
 void Figure::draw() {
     for (coords &coord: blockCoordsList) {
         if (coord.i <= 1) { continue; }
-        tetrisRenderer.drawTetrisWindowBlock(coord.i - 2, coord.j, field[(coord.i)][coord.j]);
-        //tetrisRenderer.drawTetrisWindowBlock(coord.i - 2, coord.j,color);
+        tetrisRenderer.drawTetrisWindowBlock(coord.i - FieldInfo::ROW_COORDS_OFFSET, coord.j,
+                                             field[(coord.i)][coord.j]);
     }
 }
 
 void Figure::drawAsNextFigure() {
-    for (int i = 0; i < 4; i++) {
-        tetrisRenderer.drawNextItemWindowBlock(0, i, Black);
-        tetrisRenderer.drawNextItemWindowBlock(1, i, Black);
+    for (int i = 0; i < FieldInfo::NEXT_FIGURE_FIELD_COLS; i++) {
+        for (int j = 0; j < FieldInfo::NEXT_FIGURE_FIELD_ROWS; j++) {
+            tetrisRenderer.drawNextItemWindowBlock(j, i, Black);
+        }
     }
     for (coords &coord: blockCoordsList) {
-        tetrisRenderer.drawNextItemWindowBlock(coord.i, coord.j - 3, color);
+        tetrisRenderer.drawNextItemWindowBlock(coord.i, coord.j - FieldInfo::NEXT_FIGURE_COL_COORDS_OFFSET, color);
     }
 }
 
 void Figure::dropDown() {
     while (true) {
         if (!moveDown()) { return; }
-        std::this_thread::sleep_for(std::chrono::microseconds(20));
+        std::this_thread::sleep_for(std::chrono::microseconds(DropDelay::DELAY_MCRS));
     }
 }
 
@@ -157,11 +159,10 @@ void Figure::dropDown(unsigned int &score, int booster) {
         score += (booster);
         tetrisRenderer.setScore(score);
         tetrisRenderer.drawScore();
-        std::this_thread::sleep_for(std::chrono::microseconds(20));
+        std::this_thread::sleep_for(std::chrono::microseconds(DropDelay::DELAY_MCRS));
     }
 
 }
-
 Figure::~Figure() {
 
 }
