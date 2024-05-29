@@ -18,6 +18,7 @@ struct BackGroundColors {
 };
 
 class BackGround {
+    static constexpr wchar_t DEFAULT_FILL_CHAR = L'█';
     static constexpr uint COLS = 33, ROWS = 22;
     static constexpr uint TETRIS_WINDOW_WIDTH = 20, SECOND_WINDOW_WIDTH = 10;
     static constexpr uint SCORE_WINDOW_ROWS = 4, NEXT_ITEM_WINDOW_ROWS = 4;
@@ -28,7 +29,7 @@ class BackGround {
 public:
     BackGround(BackGroundColors const& colors);
 
-    void draw(std::wostream & stream, wchar_t const& ch = L'█') const;
+    void draw(std::wostream & stream, wchar_t const& ch = DEFAULT_FILL_CHAR) const;
 };
 
 #endif //COURSEWORK_BACKGROUND_H

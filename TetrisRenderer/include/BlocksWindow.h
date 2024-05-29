@@ -15,14 +15,18 @@ namespace BlocksWindowConsts {
 class BlocksWindow {
 protected:
     Cursor & _cursor;
-    const uint _rows, _cols;
-    const uint _x, _y;
+    const uint _rows, _cols; // n of rows/cols
+    const uint _x, _y; // window coordinates;
 public:
     BlocksWindow(Cursor & cursor,
                  uint rows = BlocksWindowConsts::ROWS,
                  uint cols = BlocksWindowConsts::COLS,
                  uint x = BlocksWindowConsts::X, uint y = BlocksWindowConsts::Y);
-    void draw(uint rowI, uint colI, Color color = White, wchar_t const& ch = L'█');
+
+    // draw block at passed field coordinates
+    void draw(uint rowI, uint colI, Color color = White, wchar_t const& ch = DEFAULT_FILL_CHAR);
+
+    // clear field
     void clear();
 };
 

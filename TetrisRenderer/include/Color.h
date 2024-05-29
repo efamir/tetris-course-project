@@ -13,10 +13,13 @@ enum Color {
 
 class ColorANSI {
 protected:
-    static uint _currentCS;
+    static uint _currentColorScheme;
     static const std::vector<std::map<Color, const std::wstring>> _colorSchemes;
 public:
+    // get ESC Code Sequence equivalent wstring to passed color
     static std::wstring get(Color const color);
+
+    // load color scheme
     static void loadCS();
 };
 

@@ -1,16 +1,20 @@
 #include "../include/Color.h"
 #include "../../Utils/include/ConfigReader.h"
 
-uint ColorANSI::_currentCS = 0;
+uint ColorANSI::_currentColorScheme = 0;
+
+namespace {
+    const std::wstring RESET_COLOR_STR = L"\x1b[49m";
+}
 
 std::wstring ColorANSI::get(Color const color) {
-    if (color == BgReset) return L"\x1b[49m";
-    return ColorANSI::_colorSchemes[ColorANSI::_currentCS].at(color);
+    if (color == BgReset) return RESET_COLOR_STR;
+    return ColorANSI::_colorSchemes[ColorANSI::_currentColorScheme].at(color);
 }
 
 void ColorANSI::loadCS() {
     ConfigReader * configReader = ConfigReader::getInstance();
-    _currentCS = configReader->getColorScheme();
+    _currentColorScheme = configReader->getColorScheme();
 }
 
 const std::vector<std::map<Color, const std::wstring>> ColorANSI::_colorSchemes = {

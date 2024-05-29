@@ -7,6 +7,10 @@
 #include <thread>
 #include "TetrisRenderer/include/CursorManipulations.h"
 
+namespace {
+    const std::string FILE_NAME = "config.txt";
+}
+
 int convertIntToStr(std::string const& str) {
     constexpr int TOO_LARGE_NUMBER = -2;
     constexpr int INVALID_FORMAT = -1;
@@ -26,6 +30,7 @@ int convertIntToStr(std::string const& str) {
     }
 }
 
+// print option list
 void print_usage() {
     std::cout << "Usage: tetris [options]\n";
     std::cout << " -d, --difficulty <arg>   Set the difficulty level\n";
@@ -36,8 +41,11 @@ void print_usage() {
 }
 
 int main(int argc, char* argv[]) {
+    // sets locate for wcout stream
     std::setlocale(LC_ALL, "");
-    option options[] = {
+
+
+    const option options[] = {
             {"difficulty", required_argument, 0, 'd'},
             {"colorScheme", required_argument, 0, 'c'},
             {"resetConfig", no_argument, 0, 'r'},
@@ -46,10 +54,9 @@ int main(int argc, char* argv[]) {
             {0, 0, 0, 0}
     };
     int option;
-    int optionIndex;
+    int optionIndex; // unused variable
 
-    const char * configFile = "config.txt";
-    ConfigReader * configReader = ConfigReader::getInstance(configFile);
+    ConfigReader * configReader = ConfigReader::getInstance(FILE_NAME);
 
     int paramsRead = configReader->loadConfigData();
 
@@ -61,7 +68,7 @@ int main(int argc, char* argv[]) {
                 exit(0);
             case '?':
                 print_usage();
-                exit(-1);
+                exit(-1); // if wrong options exit with -1 status
             case 'd':
                 configReader->setDifficulty(convertIntToStr(optarg));
                 break;
@@ -83,15 +90,22 @@ int main(int argc, char* argv[]) {
 
     constexpr int TARGET_PARAMS_READ = 3;
     constexpr int SECONDS_SHOWING_WARNING = 3;
+
     if (paramsRead == -1) {
         std::wcout << "Couldn't open config file. Continuing with passed/default params." << std::flush;
+
+        // sleep to let user read the warning message
         std::this_thread::sleep_for(std::chrono::seconds(SECONDS_SHOWING_WARNING));
-        ANSIClearLine(std::wcout);
+
+        ANSIClearLine(std::wcout); // clear warning message line
     } else if (paramsRead < TARGET_PARAMS_READ) {
         std::wcout << "Couldn't read " << TARGET_PARAMS_READ - paramsRead
                   << " params. Continuing with passed/default params." << std::flush;
+
+        // sleep to let user read the warning message
         std::this_thread::sleep_for(std::chrono::seconds(SECONDS_SHOWING_WARNING));
-        ANSIClearLine(std::wcout);
+
+        ANSIClearLine(std::wcout); // clear warning message line
     }
 
     TetrisExecutor tetrisExecutor;

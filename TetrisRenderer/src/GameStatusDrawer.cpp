@@ -2,6 +2,7 @@
 
 GameStatusDrawer::GameStatusDrawer(Cursor & cursor) : _cursor(cursor) {}
 
+// draws passed wstring game status in passed color
 void GameStatusDrawer::draw(std::wstring const& str, Color const& color) {
     constexpr uint START_DRAWING_AT_ROW_INDEX = 2;
 

@@ -25,9 +25,11 @@ public:
     TetrisRenderer();
     ~TetrisRenderer();
 
+    // draws each window
     void initDraw();
-    void drawTetrisWindowBlock(uint rowI, uint colI, Color color = White, wchar_t const& ch = L'█');
-    void drawNextItemWindowBlock(uint rowI, uint colI, Color color = White, wchar_t const& ch = L'█');
+
+    void drawTetrisWindowBlock(uint rowI, uint colI, Color color = White, wchar_t const& ch = DEFAULT_FILL_CHAR);
+    void drawNextItemWindowBlock(uint rowI, uint colI, Color color = White, wchar_t const& ch = DEFAULT_FILL_CHAR);
     void setScore(uint score);
     void drawScore(Color scoreColor = White, Color bestScoreColor = White);
     void drawPause();

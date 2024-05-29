@@ -23,7 +23,7 @@ class ScoreWindow {
     Cursor & _cursor;
     uint _score, _bestScore;
     constexpr static uint WIDTH = 9;
-    const uint _x, _y;
+    const uint _x, _y; // window coordinates
     const std::string _totalScoreText = "Score";
     const std::string _bestScoreText = "Top";
     bool _textIsDrawn = false, _totalScoreChanged = true, _bestScoreChanged = true;
@@ -34,6 +34,8 @@ public:
 
     void setScore(uint score);
     void setBestScore(uint score);
+
+    // draws the scores changes
     void draw(Color scoreColor = White, Color bestScoreColor = White);
 };
 

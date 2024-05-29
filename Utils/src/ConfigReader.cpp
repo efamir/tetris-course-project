@@ -69,11 +69,14 @@ int ConfigReader::loadConfigData() {
 
         auto found = optionsStringMap.find(key);
 
+        // ignores EOF flag
         if (!std::getline(file, value)) break;
 
+        // erase '\r' if found
         size_t rI = value.find('\r');
         if (rI != value.npos) value.erase(rI);
 
+        // if found and valid increment readParamsCount
         if (found != std::end(optionsStringMap) && validateAndUpdateData(found->second, value)) {
             readParamsCount++;
         }
@@ -84,8 +87,10 @@ int ConfigReader::loadConfigData() {
 
 bool ConfigReader::validateAndUpdateData(ConfigOptions option, const std::string &value) {
     int tempN = convertIntToStr(value);
-    if (tempN < 0) return false;
+    if (tempN < 0) return false; // if bad value return false
+
     uint n = static_cast<uint>(tempN);
+
     switch (option) {
         case BestScore:
             _bestScore = n;

@@ -17,7 +17,7 @@ ScoreWindow::ScoreWindow(Cursor & cursor, uint score, uint bestScore, ScoreCoord
 }
 
 void ScoreWindow::setScore(uint score) {
-    if (score > _bestScore) {
+    if (score > _bestScore) { // updates best score automatically
         _bestScore = score;
         _bestScoreChanged = true;
     }
@@ -42,7 +42,7 @@ void ScoreWindow::draw(Color scoreColor, Color bestScoreColor) {
     try {
         _cursor.moveTo(_x, _y);
 
-        if (!_textIsDrawn) {
+        if (!_textIsDrawn) { // checks if the window text is drawn
             _cursor.moveTo(_x, _y);
 
             for (char c: _bestScoreText) {
@@ -57,7 +57,7 @@ void ScoreWindow::draw(Color scoreColor, Color bestScoreColor) {
             _textIsDrawn = true;
         }
 
-        if (_bestScoreChanged) {
+        if (_bestScoreChanged) { // if changed draw
             _cursor.moveTo(_x, _y + BEST_SCORE_ROW);
 
             std::string scoreStr = std::to_string(_bestScore);
@@ -68,7 +68,7 @@ void ScoreWindow::draw(Color scoreColor, Color bestScoreColor) {
             _bestScoreChanged = false;
         }
 
-        if (_totalScoreChanged) {
+        if (_totalScoreChanged) { // if changed draw
             _cursor.moveTo(_x, _y + TOTAL_SCORE_ROW);
 
             std::string scoreStr = std::to_string(_score);
@@ -78,6 +78,7 @@ void ScoreWindow::draw(Color scoreColor, Color bestScoreColor) {
 
             _totalScoreChanged = false;
         }
+
     } catch (std::out_of_range const& e) {
         throw e;
     } catch(...) {

@@ -16,16 +16,21 @@ void TetrisExecutor::runTetrisLoop() {
     char inpChar;
     try {
         TetrisGame tetrisGame(_tetrisRenderer, _inputReader);
-        while ((gameStatus = tetrisGame.run()) != Exit) {
+        while ((gameStatus = tetrisGame.run()) != Exit) { // while not Exit continue
             if (gameStatus == Restart) continue;
+
+            // if Game Over
             _tetrisRenderer.drawGameOver();
             while (true) {
+
+                // waits for user input
                 while ((inpChar = _inputReader.readNextChar()) == -1) {}
+
                 bool breakLoop = false;
                 switch (inpChar) {
                     case 'q':
                         _tetrisRenderer.drawGameOver();
-                        return;
+                        return; // exit tetris loop
                     case 'r':
                         breakLoop = true;
                         break;

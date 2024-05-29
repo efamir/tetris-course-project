@@ -36,16 +36,19 @@ TetrisRenderer::TetrisRenderer()
 }
 
 TetrisRenderer::~TetrisRenderer() {
-    DefaultParams::getStream() << ColorANSI::get(BgReset);
-    _cursor.moveTo();
-    ANSICursorDown(DefaultParams::getStream(), DefaultParams::ROWS);
-    DefaultParams::getStream() << "\r";
+    // sets the cursor under the game and resets colors
+    try {
+        DefaultParams::getStream() << ColorANSI::get(BgReset);
+        DefaultParams::getStream() << ColorANSI::get(Black);
+        setCursorUnderTheGame();
+    } catch (...) {} // prevents errors in destructor
 }
 
 void TetrisRenderer::setCursorUnderTheGame() {
     try {
         _cursor.moveTo();
         ANSICursorDown(DefaultParams::getStream(), DefaultParams::ROWS);
+        DefaultParams::getStream() << "\r";
     } catch (std::out_of_range const& e) {
         throw e;
     } catch (std::runtime_error const& e) {

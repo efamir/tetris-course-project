@@ -41,21 +41,25 @@ void Cursor::moveTo(const uint x, const uint y) {
                                 + std::to_string(_yLen));
     }
 
+    // calculate n of chars to move by x/y
     int xDiff = x - _x;
     int yDiff = y - _y;
 
+    // checks the direction and moves by x-axis
     if (xDiff > 0) {
         ANSICursorRight(_stream, xDiff);
     } else if (xDiff < 0) {
         ANSICursorLeft(_stream, -xDiff);
     }
 
+    // checks the direction and moves by y-axis
     if (yDiff > 0) {
         ANSICursorDown(_stream, yDiff);
     } else if (yDiff < 0) {
         ANSICursorUp(_stream, -yDiff);
     }
 
+    // set new coordinates values
     _x = x;
     _y = y;
 }
@@ -63,6 +67,8 @@ void Cursor::moveTo(const uint x, const uint y) {
 void Cursor::fill(wchar_t const& c, Color const color, bool resetPos) {
     _stream << ColorANSI::get(color);
     _stream << c;
+
+    // if resetPos sets cursor back to original coordinates
     if (resetPos) ANSICursorLeft(_stream, 1);
     else ++_x;
 }

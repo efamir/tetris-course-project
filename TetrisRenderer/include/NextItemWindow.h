@@ -17,7 +17,9 @@ public:
                    uint cols = NextItemWindowConsts::COLS,
                    uint x = NextItemWindowConsts::X,
                    uint y = NextItemWindowConsts::Y);
-    void initDraw(uint x = NextItemWindowConsts::X, uint y = NextItemWindowConsts::Y);
+
+    // draws _windowText text at the top of the window
+    void initDraw();
 };
 
 

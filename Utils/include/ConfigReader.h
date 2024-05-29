@@ -11,6 +11,7 @@ namespace {
     typedef unsigned int uint;
 }
 
+// singleton class
 class ConfigReader {
     static ConfigReader * _instance;
 protected:
@@ -24,13 +25,20 @@ protected:
     ~ConfigReader();
 
 public:
+    // delete copy constructor and = operator
     ConfigReader(ConfigReader &obj) = delete;
     void operator=(ConfigReader const&) = delete;
 
+    // called at the start of the program to initialise first instance
     static ConfigReader * getInstance(std::string const& fileName);
+
+    // get initialised instance, if it's not throws runtime_error exception
     static ConfigReader * getInstance();
 
+    // loads Config data from file and returns read params
     int loadConfigData();
+
+    // saves config data to file
     bool saveConfigData();
 
     uint getBestScore();

@@ -13,8 +13,13 @@ public:
     InputReader();
     ~InputReader();
 
+    // sets input flags for tetris game
     void setFlags();
+
+    // resets all the flags to initial status
     void resetFlags();
+
+    // returns the read char is found, else returns -1
     char readNextChar();
 };
 
