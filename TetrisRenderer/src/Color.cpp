@@ -4,11 +4,15 @@
 uint ColorANSI::_currentColorScheme = 0;
 
 namespace {
-    const std::wstring RESET_COLOR_STR = L"\x1b[49m";
+    const std::wstring COLOR_RESET_COLOR_STR = L"\x1b[0m";
+    const std::wstring BG_RESET_COLOR_STR = L"\x1b[49m";
+    const std::wstring ERROR_COLOR_STR = L"\x1b[31m";
 }
 
 std::wstring ColorANSI::get(Color const color) {
-    if (color == BgReset) return RESET_COLOR_STR;
+    if (color == ColorReset) return COLOR_RESET_COLOR_STR;
+    if (color == BgReset) return BG_RESET_COLOR_STR;
+    if (color == Error) return ERROR_COLOR_STR;
     return ColorANSI::_colorSchemes[ColorANSI::_currentColorScheme].at(color);
 }
 

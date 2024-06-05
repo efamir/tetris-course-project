@@ -51,7 +51,7 @@ ConfigReader * ConfigReader::getInstance() {
 }
 
 ConfigReader::ConfigReader(const std::string &fileName)
-: _fileName(fileName), _bestScore(0), _difficulty(0), _colorScheme(0) {}
+: _fileName(fileName), _bestScore(0), _difficulty(DIFFICULTY_MIN), _colorScheme(CS_MIN) {}
 
 ConfigReader::~ConfigReader() {
     delete _instance;

@@ -3,8 +3,16 @@
 TetrisExecutor::TetrisExecutor() = default;
 
 void TetrisExecutor::initEverything() {
-    _tetrisRenderer.initDraw();
-    _inputReader.setFlags();
+    try {
+        _tetrisRenderer.initDraw();
+        _inputReader.setFlags();
+    } catch (std::out_of_range const& e) {
+        throw e;
+    } catch (std::runtime_error const& e) {
+        throw e;
+    } catch (...) {
+        throw std::runtime_error("Unexpected error was caught in TetrisExecutor::initEverything().");
+    }
 }
 
 TetrisExecutor::~TetrisExecutor() {
@@ -39,7 +47,11 @@ void TetrisExecutor::runTetrisLoop() {
             }
         }
         _tetrisRenderer.drawGameOver();
-    } catch (std::exception const& e) {
-        std::cerr << e.what();
+    } catch (std::out_of_range const& e) {
+        throw e;
+    } catch (std::runtime_error const& e) {
+        throw e;
+    } catch (...) {
+        throw std::runtime_error("Unexpected error was caught in TetrisExecutor::runTetrisLoop().");
     }
 }

@@ -8,7 +8,7 @@
 enum Color {
     Black, BBlack, Red, BRed, Green, BGreen, Yellow, BYellow,
     Blue, BBlue, Magenta, BMagenta, BCyan, Cyan, White, BWhite,
-    BgBlack, BgReset
+    BgBlack, BgReset, ColorReset, Error
 };
 
 class ColorANSI {

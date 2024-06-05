@@ -38,15 +38,18 @@ TetrisRenderer::TetrisRenderer()
 TetrisRenderer::~TetrisRenderer() {
     // sets the cursor under the game and resets colors
     try {
-        DefaultParams::getStream() << ColorANSI::get(BgReset);
-        DefaultParams::getStream() << ColorANSI::get(Black);
         setCursorUnderTheGame();
     } catch (...) {} // prevents errors in destructor
 }
 
 void TetrisRenderer::setCursorUnderTheGame() {
     try {
-        _cursor.moveTo();
+        DefaultParams::getStream() << ColorANSI::get(BgReset);
+        DefaultParams::getStream() << ColorANSI::get(ColorReset);
+        try {
+            _cursor.moveTo();
+        } catch (std::out_of_range const& e) {}
+
         ANSICursorDown(DefaultParams::getStream(), DefaultParams::ROWS);
         DefaultParams::getStream() << "\r";
     } catch (std::out_of_range const& e) {

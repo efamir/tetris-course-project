@@ -108,11 +108,22 @@ int main(int argc, char* argv[]) {
         ANSIClearLine(std::wcout); // clear warning message line
     }
 
-    TetrisExecutor tetrisExecutor;
-    tetrisExecutor.initEverything();
-    tetrisExecutor.runTetrisLoop();
+    try {
+        TetrisExecutor tetrisExecutor;
+        tetrisExecutor.initEverything();
+        tetrisExecutor.runTetrisLoop();
+    } catch (std::out_of_range const& e) {
+        std::wcerr << ColorANSI::get(Error) << e.what() << '\n';
+        return EXIT_FAILURE;
+    } catch (std::runtime_error const& e) {
+        std::wcerr << ColorANSI::get(Error) << e.what() << '\n';
+        return EXIT_FAILURE;
+    } catch (...) {
+        std::wcerr << ColorANSI::get(Error) << "Unexpected error was caught in main() function." << '\n';
+        return EXIT_FAILURE;
+    }
 
     configReader->saveConfigData();
 
-    return 0;
+    return EXIT_SUCCESS;
 }
