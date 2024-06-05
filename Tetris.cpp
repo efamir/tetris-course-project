@@ -9,6 +9,9 @@
 
 namespace {
     const std::string FILE_NAME = "config.txt";
+    constexpr uint DIFFICULTY_RESET = 1, CS_RESET = 0, SCORE_RESET = 0;
+    constexpr int TARGET_PARAMS_READ = 3;
+    constexpr int SECONDS_SHOWING_WARNING = 3;
 }
 
 int convertIntToStr(std::string const& str) {
@@ -44,7 +47,6 @@ int main(int argc, char* argv[]) {
     // sets locate for wcout stream
     std::setlocale(LC_ALL, "");
 
-
     const option options[] = {
             {"difficulty", required_argument, 0, 'd'},
             {"colorScheme", required_argument, 0, 'c'},
@@ -65,10 +67,10 @@ int main(int argc, char* argv[]) {
         switch(option) {
             case 'h':
                 print_usage();
-                exit(0);
+                exit(EXIT_SUCCESS);
             case '?':
                 print_usage();
-                exit(-1); // if wrong options exit with -1 status
+                exit(EXIT_FAILURE); // if wrong options exit with -1 status
             case 'd':
                 configReader->setDifficulty(convertIntToStr(optarg));
                 break;
@@ -76,20 +78,17 @@ int main(int argc, char* argv[]) {
                 configReader->setColorScheme(convertIntToStr(optarg));
                 break;
             case 'r':
-                configReader->setDifficulty(0);
-                configReader->setColorScheme(0);
-                configReader->setBestScore(0);
+                configReader->setDifficulty(DIFFICULTY_RESET);
+                configReader->setColorScheme(CS_RESET);
+                configReader->setBestScore(SCORE_RESET);
                 configReader->saveConfigData();
                 breakFromLoop = true;
                 break;
             case 'b':
-                configReader->setBestScore(0);
+                configReader->setBestScore(SCORE_RESET);
                 break;
         }
     }
-
-    constexpr int TARGET_PARAMS_READ = 3;
-    constexpr int SECONDS_SHOWING_WARNING = 3;
 
     if (paramsRead == -1) {
         std::wcout << "Couldn't open config file. Continuing with passed/default params." << std::flush;

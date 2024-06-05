@@ -34,7 +34,7 @@ namespace {
         }
     }
 
-    constexpr uint DIFFICULTY_MIN = 1, DIFFICULTY_MAX = 5, CS_MIN = 0, CS_MAX = 10;
+    constexpr uint DIFFICULTY_MIN = 1, DIFFICULTY_MAX = 5, CS_MIN = 0, CS_MAX = 10, SCORE_DEFAULT = 0;
 }
 
 ConfigReader * ConfigReader::_instance = nullptr;
@@ -51,7 +51,7 @@ ConfigReader * ConfigReader::getInstance() {
 }
 
 ConfigReader::ConfigReader(const std::string &fileName)
-: _fileName(fileName), _bestScore(0), _difficulty(DIFFICULTY_MIN), _colorScheme(CS_MIN) {}
+: _fileName(fileName), _bestScore(SCORE_DEFAULT), _difficulty(DIFFICULTY_MIN), _colorScheme(CS_MIN) {}
 
 ConfigReader::~ConfigReader() {
     delete _instance;
