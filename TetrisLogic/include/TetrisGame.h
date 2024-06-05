@@ -19,7 +19,7 @@ namespace TetrisInfo{
     constexpr int COL_TO_CHECK_TO_ON_GAME_OVER = 7;
     constexpr double DEFAULT_MAX_DELAY = 500; // 500
     constexpr double DEFAULT_MIN_DELAY = 100; // 100
-    constexpr double REDUCE_DELAY = 1; // 1
+    constexpr double REDUCE_DELAY = 2; // 2
     constexpr int CLEAR_ROW_DELAY = 125;
     constexpr int CLEAR_ROW_DIFFICULTY_BOOST = 10;
     constexpr int NUM_OF_BLINKS = 2;

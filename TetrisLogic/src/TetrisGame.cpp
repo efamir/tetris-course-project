@@ -234,6 +234,7 @@ void TetrisGame::processUserInput(char ch, double &diffCheck, int &gameFinish) {
             break;
         case ' ':
             currentFigure->dropDown(score, difficulty);
+            if (diffCheck >= TetrisInfo::DEFAULT_MIN_DELAY) { diffCheck -= TetrisInfo::REDUCE_DELAY; }
             if (checkOnGameOver()) { // figure stopped - check on game over, check on full rows, put next figure, reduce delay
                 tetrisRenderer.drawGameOver();
                 gameFinish = GameOver;

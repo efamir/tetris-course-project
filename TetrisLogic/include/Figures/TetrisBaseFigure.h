@@ -45,7 +45,8 @@ protected:
     std::vector<coords> blockCoordsList;
 
 public:
-    Figure(Color (&field)[FieldInfo::FIELD_ROWS][FieldInfo::FIELD_COLS], TetrisRenderer &tetrisRenderer, Color color = static_cast<Color>(Random::randColor(Random::engine)));
+    Figure(Color (&field)[FieldInfo::FIELD_ROWS][FieldInfo::FIELD_COLS], TetrisRenderer &tetrisRenderer,
+           Color color = static_cast<Color>(Random::randColor(Random::engine)));
     void rotate();
     void moveLeft();
     void moveRight();
